@@ -16,11 +16,17 @@ let response;
  */
 exports.lambdaHandler = async (event, context) => {
     try {
+        let body = 'hello world';
         // const ret = await axios(url);
+        const request = JSON.parse(event.body);
+        if (request.challenge) {
+            body = request.challenge;
+        }
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
-                message: 'hello world 2',
+                challenge: body,
+                request,
                 // location: ret.data.trim()
             })
         }
