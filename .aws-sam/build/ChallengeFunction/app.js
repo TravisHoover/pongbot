@@ -1,5 +1,6 @@
 // const axios = require('axios')
 // const url = 'http://checkip.amazonaws.com/';
+const { WebClient } = require('@slack/web-api');
 let response;
 
 /**
@@ -21,19 +22,36 @@ exports.challengeHandler = async (event, context) => {
         const request = JSON.parse(event.body);
         if (request.challenge) {
             body = request.challenge;
+            response = {
+                'statusCode': 200,
+                'body': JSON.stringify({
+                    challenge: body,
+                })
+            }
         }
-        response = {
+
+// An access token (from your Slack app or custom integration - xoxp, xoxb)
+        const token = process.env.SLACK_TOKEN;
+        const web = new WebClient(token);
+
+// This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
+        const conversationId = request.event.channel;
+
+        // See: https://api.slack.com/methods/chat.postMessage
+        const slackMessage =  await web.chat.postMessage({ channel: conversationId, text: 'Hello there' });
+        return {
             'statusCode': 200,
             'body': JSON.stringify({
-                challenge: body,
-                request,
-                // location: ret.data.trim()
+                message: slackMessage,
             })
         }
     } catch (err) {
         console.log(err);
-        return err;
+        return {
+            'statusCode': 400,
+            'body': JSON.stringify({
+                error: err,
+            })
+        }
     }
-
-    return response
 };
