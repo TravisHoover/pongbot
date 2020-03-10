@@ -6,5 +6,5 @@ stack_name = "pongbot"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-yfxm95mr84nl"
 s3_prefix = "pongbot"
 region = "us-east-1"
-confirm_changeset = true
+confirm_changeset = false
 capabilities = "CAPABILITY_IAM"

@@ -23,6 +23,14 @@ Resources:
           Properties:
             Path: /challenge
             Method: post
+  UsersTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      TableName: Users
+
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
