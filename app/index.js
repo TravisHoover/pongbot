@@ -1,27 +1,34 @@
-// const axios = require('axios')
-// const url = 'http://checkip.amazonaws.com/';
 const {WebClient} = require('@slack/web-api');
+let doc = require('dynamodb-doc');
+let dynamo = new doc.DynamoDB();
+const token = process.env.SLACK_TOKEN;
+const web = new WebClient(token);
+
+const usersTable = process.env.USERS_TABLE;
 let response;
 
+const createResponse = (statusCode, body) => {
+    return {
+        "statusCode": statusCode,
+        "body": body || ""
+    }
+};
 /**
- *
- * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
- * @param {Object} event - API Gateway Lambda Proxy Input Format
- *
- * Context doc: https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
- * @param {Object} context
- *
- * Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * @returns {Object} object - API Gateway Lambda Proxy Output Format
- *
+ * Handler for Slack's challenge
+ * @param event
+ * @param context
+ * @returns {Promise<{body: string, statusCode: number}>}
  */
 exports.challengeHandler = async (event, context) => {
-    console.log('event', event);
-    console.log('context', context);
     try {
         let body = 'hello world';
-        // const ret = await axios(url);
         const request = JSON.parse(event.body);
+        var params = {
+            "TableName": usersTable,
+            "Key": {
+                id: '2323'
+            }
+        };
         if (request.challenge) {
             body = request.challenge;
             response = {
@@ -31,10 +38,14 @@ exports.challengeHandler = async (event, context) => {
                 })
             }
         }
-
-// An access token (from your Slack app or custom integration - xoxp, xoxb)
-        const token = process.env.SLACK_TOKEN;
-        const web = new WebClient(token);
+        dynamo.getItem(params, (err, data) => {
+            var response;
+            if (err)
+                response = createResponse(500, err);
+            else
+                response = createResponse(200, data.Item ? data.Item.doc : null);
+            callback(null, response);
+        });
 
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
         const conversationId = request.event.channel;

@@ -1,17 +1,19 @@
 {
-  "name": "hello_world",
+  "name": "pongbot",
   "version": "1.0.0",
-  "description": "hello world sample for NodeJS",
+  "description": "Ping-pong facilitator and leaderboard for slack",
   "main": "index.js",
-  "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
-  "author": "SAM CLI",
+  "repository": "https://github.com/TravisHoover/pongbot",
+  "author": "Travis Hoover",
   "license": "MIT",
   "dependencies": {
     "@slack/web-api": "^5.8.0",
-    "axios": "^0.18.0"
+    "dynamodb-doc": "^1.0.0"
   },
   "scripts": {
-    "test": "mocha tests/unit/"
+    "test": "mocha tests/unit/",
+    "build": "sam build",
+    "deploy": "sam build && sam deploy"
   },
   "devDependencies": {
     "chai": "^4.2.0",
