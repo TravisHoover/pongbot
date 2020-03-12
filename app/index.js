@@ -10,16 +10,17 @@ let response;
 const createResponse = (statusCode, body) => {
     return {
         "statusCode": statusCode,
-        "body": body || ""
+        "body": JSON.stringify(body) || ""
     }
 };
 /**
  * Handler for Slack's challenge
  * @param event
  * @param context
+ * @param callback
  * @returns {Promise<{body: string, statusCode: number}>}
  */
-exports.challengeHandler = async (event, context) => {
+exports.challengeHandler = async (event, context, callback) => {
     try {
         let body = 'hello world';
         const request = JSON.parse(event.body);
@@ -39,11 +40,11 @@ exports.challengeHandler = async (event, context) => {
             }
         }
         dynamo.getItem(params, (err, data) => {
-            var response;
+            let response;
             if (err)
                 response = createResponse(500, err);
             else
-                response = createResponse(200, data.Item ? data.Item.doc : null);
+                response = createResponse(200, data.Item ? data.Item : null);
             callback(null, response);
         });
 

@@ -17,6 +17,7 @@ Resources:
       CodeUri: app/
       Handler: index.challengeHandler
       Runtime: nodejs12.x
+      Policies: AmazonDynamoDBReadOnlyAccess
       Environment:
         Variables:
           USERS_TABLE: !Ref UsersTable
