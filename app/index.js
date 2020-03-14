@@ -39,7 +39,10 @@ exports.getUsers = async () => {
             params.ExclusiveStartKey = items.LastEvaluatedKey;
         } while (typeof items.LastEvaluatedKey != "undefined");
 
-        return scanResults;
+        return {
+            'statusCode': 200,
+            'body': JSON.stringify(scanResults),
+        };
     } catch (err) {
         console.log(err);
         return {
@@ -69,7 +72,10 @@ exports.getGames = async () => {
             params.ExclusiveStartKey = items.LastEvaluatedKey;
         } while (typeof items.LastEvaluatedKey != "undefined");
 
-        return scanResults;
+        return {
+            'statusCode': 200,
+            'body': JSON.stringify(scanResults),
+        };
     } catch (err) {
         console.log(err);
         return {
