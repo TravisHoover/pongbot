@@ -39,18 +39,10 @@ exports.getUsers = async () => {
             params.ExclusiveStartKey = items.LastEvaluatedKey;
         } while (typeof items.LastEvaluatedKey != "undefined");
 
-        return {
-            'statusCode': 200,
-            'body': JSON.stringify(scanResults),
-        };
+        return createResponse(200, scanResults);
     } catch (err) {
         console.log(err);
-        return {
-            'statusCode': 400,
-            'body': JSON.stringify({
-                error: err,
-            })
-        }
+        return createResponse(400, err);
     }
 };
 
@@ -72,18 +64,10 @@ exports.getGames = async () => {
             params.ExclusiveStartKey = items.LastEvaluatedKey;
         } while (typeof items.LastEvaluatedKey != "undefined");
 
-        return {
-            'statusCode': 200,
-            'body': JSON.stringify(scanResults),
-        };
+        return createResponse(200, scanResults);
     } catch (err) {
         console.log(err);
-        return {
-            'statusCode': 400,
-            'body': JSON.stringify({
-                error: err,
-            })
-        }
+        return createResponse(400, err)
     }
 };
 
@@ -127,19 +111,9 @@ exports.challengeHandler = async (event, context, callback) => {
 
         // See: https://api.slack.com/methods/chat.postMessage
         const slackMessage = await web.chat.postMessage({channel: conversationId, text: 'Hello there'});
-        return {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: slackMessage,
-            })
-        }
+        return createResponse(200, slackMessage);
     } catch (err) {
         console.log(err);
-        return {
-            'statusCode': 400,
-            'body': JSON.stringify({
-                error: err,
-            })
-        }
+        return createResponse(400, err);
     }
 };
