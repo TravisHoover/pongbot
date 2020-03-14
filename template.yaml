@@ -41,11 +41,11 @@ Resources:
           Properties:
             Path: /games
             Method: get
-  ChallengeFunction:
+  SlackFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: app/
-      Handler: index.challengeHandler
+      Handler: index.slackHandler
       Runtime: nodejs12.x
       Policies: AmazonDynamoDBFullAccess
       Environment:
@@ -53,10 +53,10 @@ Resources:
           USERS_TABLE: !Ref UsersTable
           GAMES_TABLE: !Ref GamesTable
       Events:
-        Challenge:
+        Slack:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /challenge
+            Path: /slack
             Method: post
   UsersTable:
     Type: AWS::DynamoDB::Table
@@ -91,15 +91,15 @@ Resources:
 
 
 Outputs:
-  ChallengeApi:
-    Description: "API Gateway endpoint URL for Prod stage for challenges"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/challenge/"
+  SlackApi:
+    Description: "API Gateway endpoint URL for Prod stage for Slack"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/slack/"
   GetUsersApi:
     Description: "API Gateway endpoint URL for Prod stage to get users"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users/"
   GetUsersFunction:
     Description: "Pongbot GetUsers Function ARN"
     Value: !GetAtt GetUsersFunction.Arn
-  ChallengeFunction:
-    Description: "Pongbot Challenge Function ARN"
-    Value: !GetAtt ChallengeFunction.Arn
+  SlackFunction:
+    Description: "Pongbot Slack Function ARN"
+    Value: !GetAtt SlackFunction.Arn

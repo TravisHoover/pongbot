@@ -1,6 +1,4 @@
 const {WebClient} = require('@slack/web-api');
-const doc = require('dynamodb-doc');
-const dynamo = new doc.DynamoDB();
 const AWS = require('aws-sdk');
 const docClient = new AWS.DynamoDB.DocumentClient({
     apiVersion: '2012-08-10',
@@ -12,7 +10,6 @@ const token = process.env.SLACK_TOKEN;
 const web = new WebClient(token);
 const usersTable = process.env.USERS_TABLE;
 const gamesTable = process.env.GAMES_TABLE;
-let response;
 
 const createResponse = (statusCode, body) => {
     return {
@@ -72,41 +69,27 @@ exports.getGames = async () => {
 };
 
 /**
- * Handler for Slack's challenge
+ * Handler for Slack
  * @param event
  * @param context
  * @param callback
  * @returns {Promise<{body: string, statusCode: number}>}
  */
-exports.challengeHandler = async (event, context, callback) => {
+exports.slackHandler = async (event, context, callback) => {
     try {
         let body = 'hello world';
         const request = JSON.parse(event.body);
-        const params = {
-            "TableName": usersTable,
-            "Key": {
-                id: '2323'
-            }
-        };
         if (request.challenge) {
             body = request.challenge;
-            response = {
+            return {
                 'statusCode': 200,
                 'body': JSON.stringify({
                     challenge: body,
                 })
             }
         }
-        dynamo.getItem(params, (err, data) => {
-            let response;
-            if (err)
-                response = createResponse(500, err);
-            else
-                response = createResponse(200, data.Item ? data.Item : null);
-            callback(null, response);
-        });
 
-// This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
+        // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
         const conversationId = request.event.channel;
 
         // See: https://api.slack.com/methods/chat.postMessage
