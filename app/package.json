@@ -1,19 +1,29 @@
 {
   "name": "pongbot",
   "version": "1.0.0",
-  "description": "Ping-pong facilitator and leaderboard for slack",
+  "description": "Ping-pong custodian and leaderboard for slack",
   "main": "index.js",
   "repository": "https://github.com/TravisHoover/pongbot",
   "author": "Travis Hoover",
   "license": "MIT",
+  "keywords": [
+    "ping",
+    "pong",
+    "bot",
+    "slack",
+    "lambda",
+    "aws",
+    "serverless",
+    "dynamodb",
+    "node"
+  ],
   "dependencies": {
     "@slack/web-api": "^5.8.0",
-    "dynamodb-doc": "^1.0.0"
+    "dynamodb-doc": "^1.0.0",
+    "aws-sdk": "latest"
   },
   "scripts": {
-    "test": "mocha tests/unit/",
-    "build": "sam build",
-    "deploy": "sam build && sam deploy"
+    "test": "mocha tests/unit/"
   },
   "devDependencies": {
     "chai": "^4.2.0",

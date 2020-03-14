@@ -1,6 +1,13 @@
 const {WebClient} = require('@slack/web-api');
-let doc = require('dynamodb-doc');
-let dynamo = new doc.DynamoDB();
+const doc = require('dynamodb-doc');
+const dynamo = new doc.DynamoDB();
+const AWS = require('aws-sdk');
+const docClient = new AWS.DynamoDB.DocumentClient({
+    apiVersion: '2012-08-10',
+    sslEnabled: false,
+    paramValidation: false,
+    convertResponseTypes: false
+});
 const token = process.env.SLACK_TOKEN;
 const web = new WebClient(token);
 
@@ -11,6 +18,36 @@ const createResponse = (statusCode, body) => {
     return {
         "statusCode": statusCode,
         "body": JSON.stringify(body) || ""
+    }
+};
+
+/**
+ * Get Users
+ * @returns {Promise<{body: string, statusCode: number}>|Promise<[]>}
+ */
+exports.getUsers = async () => {
+    try {
+        const params = {
+            TableName: usersTable,
+        };
+
+        let scanResults = [];
+        let items;
+        do {
+            items = await docClient.scan(params).promise();
+            items.Items.forEach((item) => scanResults.push(item));
+            params.ExclusiveStartKey = items.LastEvaluatedKey;
+        } while (typeof items.LastEvaluatedKey != "undefined");
+
+        return scanResults;
+    } catch (err) {
+        console.log(err);
+        return {
+            'statusCode': 400,
+            'body': JSON.stringify({
+                error: err,
+            })
+        }
     }
 };
 /**
