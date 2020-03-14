@@ -10,8 +10,8 @@ const docClient = new AWS.DynamoDB.DocumentClient({
 });
 const token = process.env.SLACK_TOKEN;
 const web = new WebClient(token);
-
 const usersTable = process.env.USERS_TABLE;
+const gamesTable = process.env.GAMES_TABLE;
 let response;
 
 const createResponse = (statusCode, body) => {
@@ -50,6 +50,37 @@ exports.getUsers = async () => {
         }
     }
 };
+
+/**
+ * Get Games
+ * @returns {Promise<{body: string, statusCode: number}>|Promise<[]>}
+ */
+exports.getGames = async () => {
+    try {
+        const params = {
+            TableName: gamesTable,
+        };
+
+        let scanResults = [];
+        let items;
+        do {
+            items = await docClient.scan(params).promise();
+            items.Items.forEach((item) => scanResults.push(item));
+            params.ExclusiveStartKey = items.LastEvaluatedKey;
+        } while (typeof items.LastEvaluatedKey != "undefined");
+
+        return scanResults;
+    } catch (err) {
+        console.log(err);
+        return {
+            'statusCode': 400,
+            'body': JSON.stringify({
+                error: err,
+            })
+        }
+    }
+};
+
 /**
  * Handler for Slack's challenge
  * @param event
@@ -61,7 +92,7 @@ exports.challengeHandler = async (event, context, callback) => {
     try {
         let body = 'hello world';
         const request = JSON.parse(event.body);
-        var params = {
+        const params = {
             "TableName": usersTable,
             "Key": {
                 id: '2323'

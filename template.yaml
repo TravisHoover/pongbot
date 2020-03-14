@@ -17,11 +17,29 @@ Resources:
       Environment:
         Variables:
           USERS_TABLE: !Ref UsersTable
+          GAMES_TABLE: !Ref GamesTable
       Events:
         GetResource:
           Type: Api
           Properties:
             Path: /users
+            Method: get
+  GetGamesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: app/
+      Handler: index.getGames
+      Runtime: nodejs12.x
+      Policies: AmazonDynamoDBReadOnlyAccess
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+          GAMES_TABLE: !Ref GamesTable
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /games
             Method: get
   ChallengeFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -33,6 +51,7 @@ Resources:
       Environment:
         Variables:
           USERS_TABLE: !Ref UsersTable
+          GAMES_TABLE: !Ref GamesTable
       Events:
         Challenge:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -40,12 +59,35 @@ Resources:
             Path: /challenge
             Method: post
   UsersTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: AWS::DynamoDB::Table
     Properties:
-      PrimaryKey:
-        Name: id
-        Type: String
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
       TableName: Users
+      BillingMode: PAY_PER_REQUEST
+  GamesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      TableName: Games
+      BillingMode: PAY_PER_REQUEST
 
 
 Outputs:
