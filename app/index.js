@@ -1,3 +1,5 @@
+const challengeHandler = require('./commands/challenge');
+
 const {WebClient} = require('@slack/web-api');
 const AWS = require('aws-sdk');
 const docClient = new AWS.DynamoDB.DocumentClient({
@@ -72,7 +74,6 @@ exports.slackHandler = async (event) => {
         const request = JSON.parse(event.body);
         const user = request.event.user;
         const message = request.event.text;
-        console.log('message', message);
         if (request.challenge) {
             return {
                 'statusCode': 200,
@@ -82,11 +83,14 @@ exports.slackHandler = async (event) => {
             }
         }
 
-        // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
         const conversationId = request.event.channel;
 
-        // See: https://api.slack.com/methods/chat.postMessage
-        await web.chat.postMessage({channel: conversationId, text: `Hello <@${user}>`});
+        if (message.includes(' challenge <@')) {
+            await web.chat.postMessage({channel: conversationId, text: challengeHandler.challenge(user, 'opponent')});
+        } else {
+            await web.chat.postMessage({channel: conversationId, text: 'Command not recognized'});
+        }
+
         return createResponse(200, request);
     } catch (err) {
         console.log(err);
