@@ -77,14 +77,15 @@ exports.getGames = async () => {
  */
 exports.slackHandler = async (event, context, callback) => {
     try {
-        let body = 'hello world';
         const request = JSON.parse(event.body);
+        const user = request.event.user;
+        const message = request.event.text;
+        console.log('message', message);
         if (request.challenge) {
-            body = request.challenge;
             return {
                 'statusCode': 200,
                 'body': JSON.stringify({
-                    challenge: body,
+                    challenge: request.challenge,
                 })
             }
         }
@@ -93,8 +94,8 @@ exports.slackHandler = async (event, context, callback) => {
         const conversationId = request.event.channel;
 
         // See: https://api.slack.com/methods/chat.postMessage
-        const slackMessage = await web.chat.postMessage({channel: conversationId, text: 'Hello there'});
-        return createResponse(200, slackMessage);
+        await web.chat.postMessage({channel: conversationId, text: `Hello <@${user}>`});
+        return createResponse(200, request);
     } catch (err) {
         console.log(err);
         return createResponse(400, err);
