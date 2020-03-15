@@ -18,25 +18,30 @@ const createResponse = (statusCode, body) => {
     }
 };
 
+const tableScan = async (table) => {
+    const params = {
+        TableName: table,
+    };
+
+    let scanResults = [];
+    let items;
+    do {
+        items = await docClient.scan(params).promise();
+        items.Items.forEach((item) => scanResults.push(item));
+        params.ExclusiveStartKey = items.LastEvaluatedKey;
+    } while (typeof items.LastEvaluatedKey != "undefined");
+
+    return scanResults;
+};
+
 /**
  * Get Users
  * @returns {Promise<{body: string, statusCode: number}>|Promise<[]>}
  */
 exports.getUsers = async () => {
     try {
-        const params = {
-            TableName: usersTable,
-        };
-
-        let scanResults = [];
-        let items;
-        do {
-            items = await docClient.scan(params).promise();
-            items.Items.forEach((item) => scanResults.push(item));
-            params.ExclusiveStartKey = items.LastEvaluatedKey;
-        } while (typeof items.LastEvaluatedKey != "undefined");
-
-        return createResponse(200, scanResults);
+        const users = await tableScan(usersTable);
+        return createResponse(200, users);
     } catch (err) {
         console.log(err);
         return createResponse(400, err);
@@ -49,19 +54,8 @@ exports.getUsers = async () => {
  */
 exports.getGames = async () => {
     try {
-        const params = {
-            TableName: gamesTable,
-        };
-
-        let scanResults = [];
-        let items;
-        do {
-            items = await docClient.scan(params).promise();
-            items.Items.forEach((item) => scanResults.push(item));
-            params.ExclusiveStartKey = items.LastEvaluatedKey;
-        } while (typeof items.LastEvaluatedKey != "undefined");
-
-        return createResponse(200, scanResults);
+        const games = await tableScan(gamesTable);
+        return createResponse(200, games);
     } catch (err) {
         console.log(err);
         return createResponse(400, err)
@@ -71,11 +65,9 @@ exports.getGames = async () => {
 /**
  * Handler for Slack
  * @param event
- * @param context
- * @param callback
  * @returns {Promise<{body: string, statusCode: number}>}
  */
-exports.slackHandler = async (event, context, callback) => {
+exports.slackHandler = async (event) => {
     try {
         const request = JSON.parse(event.body);
         const user = request.event.user;
