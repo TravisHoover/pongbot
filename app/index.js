@@ -85,13 +85,27 @@ exports.slackHandler = async (event) => {
         }
 
         const conversationId = request.event.channel;
+        const splitMessage = message.split(" ");
 
-        if (message.includes(' challenge <@')) {
-            await web.chat.postMessage({channel: conversationId, text: challengeHandler.challenge(user, 'opponent')});
-        } else if (message.includes('leaderboard')) {
-            await web.chat.postMessage({channel: conversationId, text: leaderboardHandler.getLeaderboard()});
-        } else {
-            await web.chat.postMessage({channel: conversationId, text: 'Command not recognized'});
+        /**
+         * This will be used as a unified way to accept commands and arguments
+         * [0] Pongbot's user
+         * [1] Command
+         * [2] Opponent
+         * @type {Array|*|string[]}
+         */
+        switch (splitMessage[1]) {
+            case 'challenge':
+                await web.chat.postMessage({
+                    channel: conversationId,
+                    text: challengeHandler.challenge(user, splitMessage[2])
+                });
+                break;
+            case 'leaderboard':
+                await web.chat.postMessage({channel: conversationId, text: leaderboardHandler.getLeaderboard()});
+                break;
+            default:
+                await web.chat.postMessage({channel: conversationId, text: 'Command not recognized'});
         }
 
         return createResponse(200, request);
