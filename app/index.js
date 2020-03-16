@@ -1,4 +1,5 @@
 const challengeHandler = require('./commands/challenge');
+const leaderboardHandler = require('./commands/leaderboard');
 
 const {WebClient} = require('@slack/web-api');
 const AWS = require('aws-sdk');
@@ -87,6 +88,8 @@ exports.slackHandler = async (event) => {
 
         if (message.includes(' challenge <@')) {
             await web.chat.postMessage({channel: conversationId, text: challengeHandler.challenge(user, 'opponent')});
+        } else if (message.includes('leaderboard')) {
+            await web.chat.postMessage({channel: conversationId, text: leaderboardHandler.getLeaderboard()});
         } else {
             await web.chat.postMessage({channel: conversationId, text: 'Command not recognized'});
         }
