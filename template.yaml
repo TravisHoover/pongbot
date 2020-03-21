@@ -62,15 +62,11 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        - AttributeName: PK
-          AttributeType: S
-        - AttributeName: SK
+        - AttributeName: Username
           AttributeType: S
       KeySchema:
-        - AttributeName: PK
+        - AttributeName: Username
           KeyType: HASH
-        - AttributeName: SK
-          KeyType: RANGE
       TableName: Users
       BillingMode: PAY_PER_REQUEST
   GamesTable:

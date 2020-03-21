@@ -3,12 +3,7 @@ const leaderboardHandler = require('./commands/leaderboard');
 
 const {WebClient} = require('@slack/web-api');
 const AWS = require('aws-sdk');
-const docClient = new AWS.DynamoDB.DocumentClient({
-    apiVersion: '2012-08-10',
-    sslEnabled: false,
-    paramValidation: false,
-    convertResponseTypes: false
-});
+const dynamodb = new AWS.DynamoDB();
 const token = process.env.SLACK_TOKEN;
 const web = new WebClient(token);
 const usersTable = process.env.USERS_TABLE;
@@ -29,12 +24,28 @@ const tableScan = async (table) => {
     let scanResults = [];
     let items;
     do {
-        items = await docClient.scan(params).promise();
+        items = await dynamodb.scan(params).promise();
         items.Items.forEach((item) => scanResults.push(item));
         params.ExclusiveStartKey = items.LastEvaluatedKey;
     } while (typeof items.LastEvaluatedKey != "undefined");
 
     return scanResults;
+};
+
+const getItem = async (table, key) => {
+    const params = {
+        TableName: table,
+        Key: key
+    };
+    return dynamodb.getItem(params).promise();
+};
+
+const putItem = async (table, item) => {
+    const params = {
+        TableName: table,
+        Item: item,
+    };
+    return dynamodb.putItem(params).promise();
 };
 
 /**
@@ -68,11 +79,11 @@ exports.getGames = async () => {
 /**
  * Handler for Slack
  * @param event
- * @returns {Promise<{body: string, statusCode: number}>}
+ * @returns {*}
  */
 exports.slackHandler = async (event) => {
     try {
-        const request = JSON.parse(event.body);
+        let request = JSON.parse(event.body);
         const user = request.event.user;
         const message = request.event.text;
         if (request.challenge) {
@@ -95,6 +106,27 @@ exports.slackHandler = async (event) => {
          * @type {Array|*|string[]}
          */
         switch (splitMessage[1]) {
+            case 'register':
+                const username = await getItem(usersTable, {Username: {S: user}});
+                if (Object.keys(username).length !== 0) {
+                    request = await web.chat.postMessage({
+                        channel: conversationId,
+                        text: `<@${user}> already registered`
+                    });
+                } else {
+                    const newUser = await putItem(usersTable, {Username: {S: user}});
+                    if (newUser) {
+                        await web.chat.postMessage({channel: conversationId, text: `<@${user}> registered`});
+                        request = newUser;
+                    } else {
+                        await web.chat.postMessage({
+                            channel: conversationId,
+                            text: `An error occurred when creating user`
+                        });
+                        return createResponse(400, 'Error creating user');
+                    }
+                }
+                break;
             case 'challenge':
                 await web.chat.postMessage({
                     channel: conversationId,
