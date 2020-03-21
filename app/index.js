@@ -111,6 +111,6 @@ exports.slackHandler = async (event) => {
         return createResponse(200, request);
     } catch (err) {
         console.log(err);
-        return createResponse(400, err);
+        return createResponse(400, err.message);
     }
 };
