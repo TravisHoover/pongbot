@@ -1,0 +1,37 @@
+const AWS = require('aws-sdk');
+const dynamodb = new AWS.DynamoDB();
+
+module.exports = {
+
+  getItem: async (table, key) => {
+    const params = {
+      TableName: table,
+      Key: key
+    };
+    return dynamodb.getItem(params).promise();
+  },
+
+  putItem: async (table, item) => {
+    const params = {
+      TableName: table,
+      Item: item,
+    };
+    return dynamodb.putItem(params).promise();
+  },
+
+  tableScan: async (table) => {
+    const params = {
+      TableName: table,
+    };
+
+    let scanResults = [];
+    let items;
+    do {
+      items = await dynamodb.scan(params).promise();
+      items.Items.forEach((item) => scanResults.push(item));
+      params.ExclusiveStartKey = items.LastEvaluatedKey;
+    } while (typeof items.LastEvaluatedKey != "undefined");
+
+    return scanResults;
+  }
+};
