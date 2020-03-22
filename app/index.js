@@ -2,6 +2,7 @@ const db = require("./utils/db");
 const slack = require("./utils/slack");
 const challengeHandler = require('./commands/challenge');
 const leaderboardHandler = require('./commands/leaderboard');
+const registerHandler = require('./commands/register');
 const usersTable = process.env.USERS_TABLE;
 const gamesTable = process.env.GAMES_TABLE;
 
@@ -71,19 +72,7 @@ exports.slackHandler = async (event) => {
          */
         switch (splitMessage[1]) {
             case 'register':
-                const username = await db.getItem(usersTable, {Username: {S: user}});
-                if (Object.keys(username).length !== 0) {
-                    request = await slack.postMessage(conversationId, `<@${user}> already registered`);
-                } else {
-                    const newUser = await db.putItem(usersTable, {Username: {S: user}});
-                    if (newUser) {
-                        await slack.postMessage(conversationId, `<@${user}> registered`);
-                        request = newUser;
-                    } else {
-                        await slack.postMessage(conversationId, `An error occurred when creating user`);
-                        return createResponse(400, 'Error creating user');
-                    }
-                }
+                request = await registerHandler.register(user, conversationId);
                 break;
             case 'challenge':
                 await slack.postMessage(conversationId, challengeHandler.challenge(user, splitMessage[2]));
