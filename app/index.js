@@ -51,6 +51,8 @@ exports.slackHandler = async (event) => {
         let request = JSON.parse(event.body);
         const user = request.event.user;
         const message = request.event.text;
+        const conversationId = request.event.channel;
+        const splitMessage = message.split(" ");
         if (request.challenge) {
             return {
                 'statusCode': 200,
@@ -59,9 +61,6 @@ exports.slackHandler = async (event) => {
                 })
             }
         }
-
-        const conversationId = request.event.channel;
-        const splitMessage = message.split(" ");
 
         /**
          * This will be used as a unified way to accept commands and arguments
