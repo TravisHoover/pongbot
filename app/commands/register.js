@@ -1,19 +1,16 @@
 const db = require('../utils/db');
-const slack = require('../utils/slack');
 const usersTable = process.env.USERS_TABLE;
 
-module.exports.register = async (user, conversationId) => {
+module.exports.register = async (user) => {
   const username = await db.getItem(usersTable, {username: user});
   if (Object.keys(username).length !== 0) {
-    return slack.postMessage(conversationId, `<@${user}> already registered`);
+    return `<@${user}> already registered`;
   } else {
     const newUser = await db.putItem(usersTable, {username: user});
     if (newUser) {
-      await slack.postMessage(conversationId, `<@${user}> registered`);
-      return newUser;
+      return `<@${user}> registered`;
     } else {
-      await slack.postMessage(conversationId, `An error occurred when creating user`);
-      return Promise.reject({message: 'Error creating user'});
+      return `An error occurred when creating user`;
     }
   }
 };

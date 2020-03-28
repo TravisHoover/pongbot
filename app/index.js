@@ -72,19 +72,19 @@ exports.slackHandler = async (event) => {
          */
         switch (splitMessage[1]) {
             case 'register':
-                request = await registerHandler.register(user, conversationId);
+                response = await registerHandler.register(user);
                 break;
             case 'challenge':
                 response = await challengeHandler.challenge(user, splitMessage[2]);
-                await slack.postMessage(conversationId, response);
                 break;
             case 'leaderboard':
-                await slack.postMessage(conversationId, leaderboardHandler.getLeaderboard());
+                response = leaderboardHandler.getLeaderboard();
                 break;
             default:
-                await slack.postMessage(conversationId, 'Command not recognized');
+                response = 'Command not recognized';
         }
 
+        await slack.postMessage(conversationId, response);
         return createResponse(200, response);
     } catch (err) {
         console.log(err);
