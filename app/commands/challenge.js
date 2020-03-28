@@ -1,12 +1,11 @@
 const db = require('../utils/db');
-const slack = require('../utils/slack');
 const usersTable = process.env.USERS_TABLE;
 const gamesTable = process.env.GAMES_TABLE;
 
 module.exports.challenge = async (challenger, opponent) => {
-  challenger = await db.getItem(usersTable, {username: {S: challenger}});
-  opponent = await db.getItem(usersTable, {username: {S: opponent.replace(/[<@>]/g, '')}});
-  console.log('opponent', opponent);
+  challenger = await db.getItem(usersTable, {username: challenger});
+  opponent = await db.getItem(usersTable, {username: opponent.replace(/[<@>]/g, '')});
+
   if (Object.keys(challenger).length === 0) {
     return `${challenger} has not registered';`
   }
@@ -16,16 +15,11 @@ module.exports.challenge = async (challenger, opponent) => {
 
   await db.putItem(gamesTable,
     {
-      challenger:
-        {
-          S: challenger
-        },
-      opponent:
-        {
-          S: opponent
-        },
+      ID: `${new Date()}`,
+      challenger: challenger.Item.username,
+      opponent: opponent.Item.username,
     },
   );
 
-  return `<@${challenger}> challenging ${opponent}, but not yet implemented`;
+  return `<@${challenger.Item.username}> challenging <@${opponent.Item.username}>`;
 };

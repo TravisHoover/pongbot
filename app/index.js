@@ -49,6 +49,7 @@ exports.getGames = async () => {
 exports.slackHandler = async (event) => {
     try {
         let request = JSON.parse(event.body);
+        let response;
         const user = request.event.user;
         const message = request.event.text;
         const conversationId = request.event.channel;
@@ -74,7 +75,8 @@ exports.slackHandler = async (event) => {
                 request = await registerHandler.register(user, conversationId);
                 break;
             case 'challenge':
-                await slack.postMessage(conversationId, challengeHandler.challenge(user, splitMessage[2]));
+                response = await challengeHandler.challenge(user, splitMessage[2]);
+                await slack.postMessage(conversationId, response);
                 break;
             case 'leaderboard':
                 await slack.postMessage(conversationId, leaderboardHandler.getLeaderboard());
@@ -83,7 +85,7 @@ exports.slackHandler = async (event) => {
                 await slack.postMessage(conversationId, 'Command not recognized');
         }
 
-        return createResponse(200, request);
+        return createResponse(200, response);
     } catch (err) {
         console.log(err);
         return createResponse(400, err.message);
