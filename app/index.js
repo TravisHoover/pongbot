@@ -63,6 +63,8 @@ exports.slackHandler = async (event) => {
             }
         }
 
+        const openGame = await db.queryByIndex(gamesTable, 'status-index', 'status', 'open'); // TODO Create index in template.yml
+
         /**
          * This will be used as a unified way to accept commands and arguments
          * [0] Pongbot's user
@@ -75,6 +77,10 @@ exports.slackHandler = async (event) => {
                 response = await registerHandler.register(user);
                 break;
             case 'challenge':
+                if (openGame.Count > 0) {
+                    await slack.postMessage(conversationId, 'A game is already in progress');
+                    return createResponse(400, 'A game is already in progress.')
+                }
                 response = await challengeHandler.challenge(user, splitMessage[2]);
                 break;
             case 'leaderboard':

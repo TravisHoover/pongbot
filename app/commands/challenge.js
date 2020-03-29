@@ -18,6 +18,7 @@ module.exports.challenge = async (challenger, opponent) => {
       ID: `${new Date()}`,
       challenger: challenger.Item.username,
       opponent: opponent.Item.username,
+      status: 'open',
     },
   );
 
