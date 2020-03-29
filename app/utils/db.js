@@ -31,6 +31,29 @@ module.exports = {
     }).promise();
   },
 
+  queryByIndex: async (table, index, attribute, value) => {
+    const key = `#${value}`;
+    const attributeKey = `:v_${value}`;
+    const params = {
+      TableName: table,
+      IndexName: index,
+      KeyConditionExpression: `${key} = ${attributeKey}`,
+      ExpressionAttributeNames: {
+        [key]: `${attribute}`
+      },
+      ExpressionAttributeValues: {
+        [attributeKey]: `${value}`
+      }
+    };
+
+    return dynamodb.query(params, function (err, data) {
+      if (err) console.log(err);
+      else {
+        return data.Items;
+      }
+    }).promise();
+  },
+
   tableScan: async (table) => {
     const params = {
       TableName: table,
