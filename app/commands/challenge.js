@@ -40,5 +40,7 @@ module.exports.won = async (game, user) => {
       '#s': 'status',
     },
   };
-  return await db.updateItem(params);
+
+  await db.updateItem(params);
+  return 'Game has been recorded.';
 };
