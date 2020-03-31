@@ -1,7 +1,3 @@
 {
-  "body": {
-    "token": "Jhj5dZrVaK7ZwHHjRyZWjbDl",
-    "challenge": "3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P",
-    "type": "url_verification"
-  }
+  "body": "{\n    \"token\": \"gzlEdPbHt34TCMhFDmH1xqMB\",\n    \"team_id\": \"T4SC0KX4Y\",\n    \"api_app_id\": \"AV1ARJ78Q\",\n    \"challenge\": \"3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P\",\n    \"type\": \"url_verification\",\n    \"event\": {\n        \"client_msg_id\": \"e5a59593-88a9-4825-a211-96a21470edfa\",\n        \"type\": \"app_mention\",\n        \"text\": \"<@UUPSL6NAF> won <@UB0JU8UKB>\",\n        \"user\": \"UUPSL6NAF\",\n        \"ts\": \"1583609627.001100\",\n        \"team\": \"T4SC0KX4Y\",\n        \"blocks\": [\n            {\n                \"type\": \"rich_text\",\n                \"block_id\": \"s=Z=\",\n                \"elements\": [\n                    {\n                        \"type\": \"rich_text_section\",\n                        \"elements\": [\n                            {\n                                \"type\": \"text\",\n                                \"text\": \"hello \"\n                            },\n                            {\n                                \"type\": \"user\",\n                                \"user_id\": \"UUPSL6NAF\"\n                            }\n                        ]\n                    }\n                ]\n            }\n        ],\n        \"channel\": \"CU9TPH39A\",\n        \"event_ts\": \"1583609627.001100\"\n    },\n    \"event_id\": \"EvUNKJDKL2\",\n    \"event_time\": 1583609627,\n    \"authed_users\": [\n        \"UUPSL6NAF\"\n    ]\n}"
 }
