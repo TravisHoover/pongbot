@@ -31,6 +31,16 @@ module.exports = {
     }).promise();
   },
 
+  updateItem: async (params) => {
+    return dynamodb.update(params, function (err, data) {
+      if (err) {
+        console.log("Error", err);
+      } else {
+        return data;
+      }
+    }).promise();
+  },
+
   queryByIndex: async (table, index, attribute, value) => {
     const key = `#${value}`;
     const attributeKey = `:v_${value}`;

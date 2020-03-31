@@ -24,3 +24,21 @@ module.exports.challenge = async (challenger, opponent) => {
 
   return `<@${challenger.Item.username}> challenging <@${opponent.Item.username}>`;
 };
+
+module.exports.won = async (game, user) => {
+  const params = {
+    TableName: gamesTable,
+    Key: {
+      ID: game.Items[0].ID,
+    },
+    UpdateExpression: 'set #s = :s, winner = :w',
+    ExpressionAttributeValues: {
+      ':s': 'closed',
+      ':w': `${user}`,
+    },
+    ExpressionAttributeNames: {
+      '#s': 'status',
+    },
+  };
+  return await db.updateItem(params);
+};

@@ -83,6 +83,9 @@ exports.slackHandler = async (event) => {
                 }
                 response = await challengeHandler.challenge(user, splitMessage[2]);
                 break;
+            case 'won':
+                response = await challengeHandler.won(openGame, user);
+                break;
             case 'leaderboard':
                 response = leaderboardHandler.getLeaderboard();
                 break;
