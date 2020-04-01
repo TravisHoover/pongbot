@@ -63,7 +63,7 @@ exports.slackHandler = async (event) => {
             }
         }
 
-        const openGame = await db.queryByIndex(gamesTable, 'status-index', 'status', 'open'); // TODO Create index in template.yml
+        const openGame = await db.queryByIndex(gamesTable, 'status-index', 'status', 'open');
 
         /**
          * This will be used as a unified way to accept commands and arguments
