@@ -73,7 +73,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: ID
           AttributeType: S
         - AttributeName: status
           AttributeType: S
