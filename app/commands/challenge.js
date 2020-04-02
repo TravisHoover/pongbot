@@ -26,7 +26,7 @@ module.exports.challenge = async (challenger, opponent) => {
 };
 
 module.exports.won = async (game, user) => {
-  const params = {
+  const gameParams = {
     TableName: gamesTable,
     Key: {
       ID: game.Items[0].ID,
@@ -41,6 +41,16 @@ module.exports.won = async (game, user) => {
     },
   };
 
-  await db.updateItem(params);
+  const winnerParams = {
+    TableName: usersTable,
+    Key: {
+      username: user,
+    },
+    ExpressionAttributeValues: {':inc': 1},
+    UpdateExpression: 'ADD wins :inc',
+  };
+
+  await db.updateItem(gameParams);
+  await db.updateItem(winnerParams);
   return 'Game has been recorded.';
 };

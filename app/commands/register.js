@@ -6,7 +6,7 @@ module.exports.register = async (user) => {
   if (Object.keys(username).length !== 0) {
     return `<@${user}> already registered`;
   } else {
-    const newUser = await db.putItem(usersTable, {username: user});
+    const newUser = await db.putItem(usersTable, {username: user, wins: 0});
     if (newUser) {
       return `<@${user}> registered`;
     } else {
