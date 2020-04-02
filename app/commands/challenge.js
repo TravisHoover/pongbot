@@ -47,7 +47,7 @@ module.exports.won = async (game, user) => {
       username: user,
     },
     ExpressionAttributeValues: {':inc': 1},
-    UpdateExpression: 'ADD wins :inc',
+    UpdateExpression: 'SET wins = wins + :inc',
   };
 
   await db.updateItem(gameParams);
