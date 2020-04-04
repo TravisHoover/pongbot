@@ -2,6 +2,12 @@ const db = require('../utils/db');
 const usersTable = process.env.USERS_TABLE;
 const gamesTable = process.env.GAMES_TABLE;
 
+/**
+ * Opens a game between two registered users
+ * @param challenger
+ * @param opponent
+ * @returns {Promise<string>}
+ */
 module.exports.challenge = async (challenger, opponent) => {
   challenger = await db.getItem(usersTable, {username: challenger});
   opponent = await db.getItem(usersTable, {username: opponent.replace(/[<@>]/g, '')});
@@ -25,7 +31,21 @@ module.exports.challenge = async (challenger, opponent) => {
   return `<@${challenger.Item.username}> challenging <@${opponent.Item.username}>`;
 };
 
+/**
+ * Closes game and records winner.
+ * Increases wins and losses counts on participants
+ * @param game
+ * @param user
+ * @returns {Promise<string>}
+ */
 module.exports.won = async (game, user) => {
+  const participants = [];
+  console.log('game', game);
+  participants.push(game.Items[0].challenger);
+  participants.push(game.Items[0].opponent);
+
+  const loser = participants[0] === user ? participants[0] : participants[1];
+
   const gameParams = {
     TableName: gamesTable,
     Key: {
@@ -50,7 +70,17 @@ module.exports.won = async (game, user) => {
     UpdateExpression: 'SET wins = wins + :inc',
   };
 
+  const loserParams = {
+    TableName: usersTable,
+    Key: {
+      username: loser,
+    },
+    ExpressionAttributeValues: {':inc': 1},
+    UpdateExpression: 'SET losses = losses + :inc',
+  };
+
   await db.updateItem(gameParams);
   await db.updateItem(winnerParams);
+  await db.updateItem(loserParams);
   return 'Game has been recorded.';
 };
