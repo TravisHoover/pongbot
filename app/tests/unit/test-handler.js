@@ -6,7 +6,7 @@ const expect = chai.expect;
 let slackChallenge = require('../../../events/slackChallenge');
 
 describe('Tests index', function () {
-    it('verifies successful response', async () => {
+    it('handles Slack\'s authentication', async () => {
         const result = await index.slackHandler(slackChallenge);
 
         expect(result).to.be.an('object');

@@ -1,0 +1,3 @@
+{
+  "body": "{\n    \"token\": \"gzlEdPbHt34TCMhFDmH1xqMB\",\n    \"team_id\": \"T4SC0KX4Y\",\n    \"event\": {\n        \"text\": \"<@UUPSL6NAF> won\",\n        \"user\": \"UUPSL6NAF\",\n        \"team\": \"T4SC0KX4Y\",\n        \"channel\": \"CU9TPH39A\"\n    },\n    \"event_id\": \"EvUNKJDKL2\",\n    \"event_time\": 1583609627,\n    \"authed_users\": [\n        \"UUPSL6NAF\"\n    ]\n}"
+}
