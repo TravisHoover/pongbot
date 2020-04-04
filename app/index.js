@@ -54,6 +54,11 @@ exports.slackHandler = async (event) => {
         const message = request.event.text;
         const conversationId = request.event.channel;
         const splitMessage = message.split(" ");
+
+        /**
+         * To integrate with Slack, a 'challenge' must be made by Slack that sends a POST to the provided endpoint
+         * This challenge must reply with the message sent to authenticate the bot.
+         */
         if (request.challenge) {
             return {
                 'statusCode': 200,
