@@ -22,13 +22,12 @@
     "aws-sdk": "latest"
   },
   "scripts": {
-    "test": "mocha tests/unit/",
+    "test": "jest",
     "build": "cd .. && sam build",
     "deploy": "cd .. && sam build && sam deploy",
     "logs": "sam logs -n SlackFunction --stack-name pongbot --tail"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^7.1.1"
+    "jest": "^25.2.7"
   }
 }
