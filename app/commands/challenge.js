@@ -44,7 +44,7 @@ module.exports.won = async (game, user) => {
   participants.push(game.Items[0].challenger);
   participants.push(game.Items[0].opponent);
 
-  const loser = participants[0] === user ? participants[0] : participants[1];
+  const loser = participants[0] !== user ? participants[0] : participants[1];
 
   const gameParams = {
     TableName: gamesTable,
