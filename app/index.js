@@ -94,7 +94,7 @@ exports.slackHandler = async (event) => {
                 } else response = 'No games in progress.';
                 break;
             case 'leaderboard':
-                response = leaderboardHandler.getLeaderboard();
+                response = await leaderboardHandler.getLeaderboard();
                 break;
             default:
                 response = 'Command not recognized';

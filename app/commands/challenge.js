@@ -40,7 +40,6 @@ module.exports.challenge = async (challenger, opponent) => {
  */
 module.exports.won = async (game, user) => {
   const participants = [];
-  console.log('game', game);
   participants.push(game.Items[0].challenger);
   participants.push(game.Items[0].opponent);
 
