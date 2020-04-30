@@ -13,6 +13,7 @@ Resources:
       CodeUri: app/
       Handler: index.getUsers
       Runtime: nodejs12.x
+      MemorySize: 1024
       Policies: AmazonDynamoDBReadOnlyAccess
       Environment:
         Variables:
