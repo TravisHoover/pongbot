@@ -24,7 +24,16 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: cd app/ && npm install && npm test
+    - run: |
+        - mkdir -p ~/.aws
+          touch ~/.aws/credentials
+
+          echo "[default]
+          aws_access_key_id = ${{ secrets.aws_access_key_id }}
+          aws_secret_access_key = ${{ secrets.aws_secret_access_key }}
+          region = us-east-1
+
+    - cd app/ && npm install && npm test
       env:
         CI: true
         aws_access_key_id: ${{ secrets.aws_access_key_id }}
