@@ -27,7 +27,6 @@ jobs:
     - run: |
         - mkdir -p ~/.aws
           touch ~/.aws/credentials
-          echo "[default]
           aws_access_key_id = ${{ secrets.aws_access_key_id }}
           aws_secret_access_key = ${{ secrets.aws_secret_access_key }}
           region = us-east-1
