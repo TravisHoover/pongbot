@@ -19,22 +19,22 @@ jobs:
         node-version: [10.x, 12.x]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: |
-        - mkdir -p ~/.aws
-          touch ~/.aws/credentials
-          aws_access_key_id = ${{ secrets.aws_access_key_id }}
-          aws_secret_access_key = ${{ secrets.aws_secret_access_key }}
-          region = us-east-1
-    - run: |
-        - cd app/
-          npm install
-          npm test
-      env:
+      - name: "Configure AWS Credentials" Action For GitHub Actions
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.aws_access_key_id }}
+          aws-secret-access-key: ${{ secrets.aws_secret_access_key }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: |
+          - cd app/
+            npm install
+            npm test
+        env:
         CI: true
         aws_access_key_id: ${{ secrets.aws_access_key_id }}
         aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
