@@ -3,9 +3,11 @@
 const index = require('../index.js');
 
 describe('Integration tests', () => {
-  test('get users', async () => {
-    const users = await index.getUsers();
-    expect(users).toMatchObject({statusCode: 200});
+  describe('Users', () => {
+    test('get users', async () => {
+      const users = await index.getUsers();
+      expect(users).toMatchObject({statusCode: 200});
+    })
   })
 
   test('get games', async () => {

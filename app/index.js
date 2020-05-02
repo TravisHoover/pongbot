@@ -17,7 +17,7 @@ const createResponse = (statusCode, body) => {
  * Get Users
  * @returns {Promise<{body: string, statusCode: number}>|Promise<[]>}
  */
-exports.getUsers = async () => {
+const getUsers = async () => {
     try {
         const users = await db.tableScan(usersTable);
         return createResponse(200, users);
@@ -31,7 +31,7 @@ exports.getUsers = async () => {
  * Get Games
  * @returns {Promise<{body: string, statusCode: number}>|Promise<[]>}
  */
-exports.getGames = async () => {
+const getGames = async () => {
     try {
         const games = await db.tableScan(gamesTable);
         return createResponse(200, games);
@@ -46,7 +46,7 @@ exports.getGames = async () => {
  * @param event
  * @returns {*}
  */
-exports.slackHandler = async (event) => {
+const slackHandler = async (event) => {
     try {
         let request = JSON.parse(event.body);
         let response;
@@ -106,4 +106,11 @@ exports.slackHandler = async (event) => {
         console.log(err);
         return createResponse(400, err.message);
     }
+};
+
+module.exports = {
+    createResponse,
+    getGames,
+    getUsers,
+    slackHandler,
 };

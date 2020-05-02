@@ -13,4 +13,10 @@ describe('Unit tests', () => {
 
     expect(body).toHaveProperty('challenge');
   });
+  test('create response should format as expected', async () => {
+    const body = {message: 'test'};
+    const response = index.createResponse(200, body);
+    expect(typeof response).toBe('object');
+    expect(response).toHaveProperty('statusCode');
+  })
 })
