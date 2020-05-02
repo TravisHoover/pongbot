@@ -1,4 +1,5 @@
-![Node.js CI](https://github.com/TravisHoover/pongbot/workflows/Node.js%20CI/badge.svg)
+[![Node.js CI](https://github.com/TravisHoover/pongbot/workflows/Node.js%20CI/badge.svg)](https://github.com/TravisHoover/pongbot/actions)
+[![codecov](https://codecov.io/gh/TravisHoover/pongbot/branch/master/graph/badge.svg)](https://codecov.io/gh/TravisHoover/pongbot)
 # Pongbot
 
 Challenge other players and keep track of records and game histories in slack.
