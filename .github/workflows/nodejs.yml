@@ -36,6 +36,4 @@ jobs:
             npm install
             npm test
         env:
-        CI: true
-        aws_access_key_id: ${{ secrets.aws_access_key_id }}
-        aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+          CI: true
