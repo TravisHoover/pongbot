@@ -1,7 +1,7 @@
 const db = require('../utils/db');
 const usersTable = process.env.USERS_TABLE;
 
-module.exports.getLeaderboard = async () => {
+const getLeaderboard = async () => {
   const users = await db.tableScan(usersTable);
   let result = '';
 
@@ -13,3 +13,7 @@ module.exports.getLeaderboard = async () => {
   })
   return JSON.stringify(result);
 };
+
+module.exports = {
+  getLeaderboard,
+}
