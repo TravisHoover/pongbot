@@ -7,6 +7,16 @@ const registerMessage = require('../events/register.json');
 jest.mock('./utils/slack.js');
 
 describe('Core tests', () => {
+  test('call getUsers', async () => {
+    const users = await index.getUsers();
+    expect(users).toHaveProperty('statusCode');
+    expect(users.statusCode).toBe(200);
+  })
+  test('call getGames', async () => {
+    const games = await index.getGames();
+    expect(games).toHaveProperty('statusCode');
+    expect(games.statusCode).toBe(200);
+  })
   test('handle Slack challenge', async () => {
     const test = await index.slackHandler(slackChallenge);
     expect(test).toMatchObject({statusCode: 200});
