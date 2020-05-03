@@ -3,6 +3,7 @@
 const index = require('./index.js');
 const slackChallenge = require('../events/slackChallenge.json');
 const registerMessage = require('../events/register.json');
+const challengeMessage = require('../events/challenge.json');
 
 jest.mock('./utils/slack.js');
 
@@ -33,5 +34,9 @@ describe('Core tests', () => {
     const response = await index.slackHandler(registerMessage);
     expect(response).toHaveProperty('statusCode');
     expect(response.body).toContain('registered');
+  })
+  test('make a challenge as an unregistered user', async () => {
+    const challenge = await index.slackHandler(challengeMessage);
+    expect(challenge).toContain('has not registered');
   })
 })
