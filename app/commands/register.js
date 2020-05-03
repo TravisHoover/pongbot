@@ -1,7 +1,7 @@
 const db = require('../utils/db');
 const usersTable = process.env.USERS_TABLE;
 
-module.exports.register = async (user) => {
+register = async (user) => {
   const username = await db.getItem(usersTable, {username: user});
   if (Object.keys(username).length !== 0) {
     return `<@${user}> already registered`;
@@ -14,3 +14,7 @@ module.exports.register = async (user) => {
     }
   }
 };
+
+module.exports = {
+  register,
+}
