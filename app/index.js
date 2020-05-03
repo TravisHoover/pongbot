@@ -18,13 +18,8 @@ const createResponse = (statusCode, body) => {
  * @returns {Promise<{body: string, statusCode: number}>|Promise<[]>}
  */
 const getUsers = async () => {
-    try {
-        const users = await db.tableScan(usersTable);
-        return createResponse(200, users);
-    } catch (err) {
-        console.log(err);
-        return createResponse(400, err);
-    }
+    const users = await db.tableScan(usersTable);
+    return createResponse(200, users);
 };
 
 /**
@@ -32,13 +27,8 @@ const getUsers = async () => {
  * @returns {Promise<{body: string, statusCode: number}>|Promise<[]>}
  */
 const getGames = async () => {
-    try {
-        const games = await db.tableScan(gamesTable);
-        return createResponse(200, games);
-    } catch (err) {
-        console.log(err);
-        return createResponse(400, err)
-    }
+    const games = await db.tableScan(gamesTable);
+    return createResponse(200, games);
 };
 
 /**

@@ -42,6 +42,21 @@ describe('Core tests', () => {
     })
   })
   describe('Challenge case', () => {
+    test('create a challenge', async () => {
+      await db.putItem('Users', {
+        username: 'challenger',
+        wins: 0,
+        losses: 0,
+      });
+      await db.putItem('Users', {
+        username: 'opponent',
+        wins: 0,
+        losses: 0,
+      });
+      const challenge = await index.slackHandler(challengeMessage);
+      console.log('challenge', challenge);
+
+    });
     test('make a challenge with an open game', async () => {
       await db.putItem(
         'Games',
