@@ -35,8 +35,8 @@ describe('Core tests', () => {
     expect(response).toHaveProperty('statusCode');
     expect(response.body).toContain('registered');
   })
-  test('make a challenge as an unregistered user', async () => {
+  test('make a challenge with an open game', async () => {
     const challenge = await index.slackHandler(challengeMessage);
-    expect(challenge).toContain('has not registered');
+    expect(challenge.body).toContain('A game is already in progress');
   })
 })
