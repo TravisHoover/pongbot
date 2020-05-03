@@ -32,6 +32,7 @@ const putItem = async (table, item) => {
   return dynamodb.put(params, function (err, data) {
     if (err) {
       console.log("Error", err);
+      throw err.message;
     } else {
       return data;
     }
