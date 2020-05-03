@@ -2,6 +2,7 @@
 
 const index = require('../index.js');
 const leaderboard = require('../commands/leaderboard.js');
+const db = require('../utils/db')
 
 describe('Integration tests', () => {
   describe('Users', () => {
@@ -19,4 +20,14 @@ describe('Integration tests', () => {
     const results = await leaderboard.getLeaderboard();
     expect(typeof results).toBe('string');
   })
+  it('should insert item into table', async () => {
+    await db
+      .putItem('Users', {username: 'test'});
+
+    const {Item} = await db.getItem('Users', {username: 'test'});
+
+    expect(Item).toEqual({
+      username: 'test'
+    });
+  });
 });

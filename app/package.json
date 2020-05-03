@@ -29,6 +29,7 @@
     "logs": "sam logs -n SlackFunction --stack-name pongbot --tail"
   },
   "devDependencies": {
-    "jest": "^25.2.7"
+    "jest": "^25.2.7",
+    "@shelf/jest-dynamodb": "^1.7.0"
   }
 }
