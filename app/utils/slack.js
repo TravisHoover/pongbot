@@ -8,8 +8,10 @@ const web = new WebClient(token);
  * @param message
  * @returns {Promise<void>}
  */
-module.exports = {
-  postMessage: async (conversationId, message) => {
-    await web.chat.postMessage({channel: conversationId, text: message});
-  }
+const postMessage = async (conversationId, message) => {
+  await web.chat.postMessage({channel: conversationId, text: message});
 };
+
+module.exports = {
+  postMessage,
+}

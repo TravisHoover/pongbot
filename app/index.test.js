@@ -2,6 +2,9 @@
 
 const index = require('./index.js');
 const slackChallenge = require('../events/slackChallenge.json');
+const registerMessage = require('../events/register.json');
+
+jest.mock('./utils/slack.js');
 
 describe('Core tests', () => {
   test('handle Slack challenge', async () => {
@@ -15,5 +18,10 @@ describe('Core tests', () => {
     const response = index.createResponse(200, body);
     expect(typeof response).toBe('object');
     expect(response).toHaveProperty('statusCode');
+  })
+  test('register a user', async () => {
+    const response = await index.slackHandler(registerMessage);
+    expect(response).toHaveProperty('statusCode');
+    expect(response.body).toContain('registered');
   })
 })
