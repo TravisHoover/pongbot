@@ -6,12 +6,8 @@ register = async (user) => {
   if (Object.keys(username).length !== 0) {
     return `<@${user}> already registered`;
   } else {
-    const newUser = await db.putItem(usersTable, {username: user, wins: 0, losses: 0});
-    if (newUser) {
-      return `<@${user}> registered`;
-    } else {
-      return `An error occurred when creating user`;
-    }
+    await db.putItem(usersTable, {username: user, wins: 0, losses: 0});
+    return `<@${user}> registered`;
   }
 };
 

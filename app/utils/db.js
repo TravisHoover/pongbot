@@ -16,9 +16,8 @@ const getItem = async (table, key) => {
     Key: key
   };
   return dynamodb.get(params, function (err, data) {
-    if (err) {
-      console.log('Error ', err);
-    } else {
+    if (err) console.log(err);
+    else {
       return data.Item
     }
   }).promise();
@@ -30,10 +29,8 @@ const putItem = async (table, item) => {
     Item: item,
   };
   return dynamodb.put(params, function (err, data) {
-    if (err) {
-      console.log("Error", err);
-      throw err.message;
-    } else {
+    if (err) console.log(err);
+    else {
       return data;
     }
   }).promise();
@@ -41,9 +38,8 @@ const putItem = async (table, item) => {
 
 const updateItem = async (params) => {
   return dynamodb.update(params, function (err, data) {
-    if (err) {
-      console.log("Error", err);
-    } else {
+    if (err) console.log(err);
+    else {
       return data;
     }
   }).promise();
