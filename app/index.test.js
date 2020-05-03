@@ -1,9 +1,9 @@
 'use strict';
 
-const index = require('../index.js');
-const slackChallenge = require('../../events/slackChallenge');
+const index = require('./index.js');
+const slackChallenge = require('../events/slackChallenge.json');
 
-describe('Unit tests', () => {
+describe('Core tests', () => {
   test('handle Slack challenge', async () => {
     const test = await index.slackHandler(slackChallenge);
     expect(test).toMatchObject({statusCode: 200});
