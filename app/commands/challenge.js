@@ -8,7 +8,7 @@ const gamesTable = process.env.GAMES_TABLE;
  * @param opponent
  * @returns {Promise<string>}
  */
-module.exports.challenge = async (challenger, opponent) => {
+const challenge = async (challenger, opponent) => {
   challenger = await db.getItem(usersTable, {username: challenger});
   opponent = await db.getItem(usersTable, {username: opponent.replace(/[<@>]/g, '')});
 
@@ -38,7 +38,7 @@ module.exports.challenge = async (challenger, opponent) => {
  * @param user
  * @returns {Promise<string>}
  */
-module.exports.won = async (game, user) => {
+const won = async (game, user) => {
   const participants = [];
   participants.push(game.Items[0].challenger);
   participants.push(game.Items[0].opponent);
@@ -83,3 +83,8 @@ module.exports.won = async (game, user) => {
   await db.updateItem(loserParams);
   return 'Game has been recorded.';
 };
+
+module.exports = {
+  challenge,
+  won,
+}
