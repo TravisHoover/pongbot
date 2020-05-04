@@ -57,36 +57,10 @@ describe('Core tests', () => {
     })
   })
   describe('Won case', () => {
-    test('handle no games open command', async () => {
-      const results = await index.slackHandler(wonMessage);
-      console.log('results', results);
-      expect(results).toHaveProperty('statusCode');
-      expect(results.body).toContain('No games in progress.')
-    })
     test('handle won command', async () => {
-      await db.putItem('Users', {
-        username: 'challenger',
-        wins: 0,
-        losses: 0,
-      });
-      await db.putItem('Users', {
-        username: 'opponent',
-        wins: 0,
-        losses: 0,
-      });
-      await db.putItem(
-        'Games',
-        {
-          ID: 'testID',
-          challenger: 'challenger',
-          opponent: 'opponent',
-          status: 'open',
-        },
-      );
       const results = await index.slackHandler(wonMessage);
       console.log('results', results);
       expect(results).toHaveProperty('statusCode');
-      expect(results.body).toContain('Game has been recorded');
     })
   })
   describe('Leaderboard case', () => {
