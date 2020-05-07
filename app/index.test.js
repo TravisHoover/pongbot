@@ -51,6 +51,8 @@ describe('Core tests', () => {
           losses: 0,
         },
       );
+      const openGame = await db.queryByIndex('Games', 'status-index', 'status', 'open');
+      console.log('openGame', openGame);
       const challenge = await index.slackHandler(challengeMessage);
       expect(challenge.body).toContain('<@challenger> challenging <@opponent>');
     })
@@ -70,11 +72,35 @@ describe('Core tests', () => {
   })
   describe('Won case', () => {
     test('handle won command', async () => {
+      await db.putItem(
+        'Games',
+        {
+          ID: 'testID',
+          challenger: 'challenger',
+          opponent: 'opponent',
+          status: 'open',
+        },
+      );
       const results = await index.slackHandler(wonMessage);
       expect(results.statusCode).toBe(200);
       expect(results.body).toContain('Game has been recorded');
     });
     test('handle won command with no open game', async () => {
+      const openGame = await db.queryByIndex('Games', 'status-index', 'status', 'open');
+      await db.updateItem({
+        TableName: 'Games',
+        Key: {
+          ID: openGame.Items[0].ID,
+        },
+        UpdateExpression: 'set #s = :s, winner = :w',
+        ExpressionAttributeValues: {
+          ':s': 'closed',
+          ':w': `challenger`,
+        },
+        ExpressionAttributeNames: {
+          '#s': 'status',
+        },
+      });
       const results = await index.slackHandler(wonMessage);
       expect(results.body).toContain('No games in progress');
     })
