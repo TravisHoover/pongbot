@@ -43,7 +43,9 @@ const won = async (game, user) => {
   participants.push(game.Items[0].challenger);
   participants.push(game.Items[0].opponent);
 
-  const loser = participants[0] !== user ? participants[0] : participants[1];
+  const loserUsername = participants[0] !== user ? participants[0] : participants[1];
+  const winner = await db.getItem(usersTable, {username: user});
+  const loser = await db.getItem(usersTable, {username: loserUsername});
 
   const gameParams = {
     TableName: gamesTable,
@@ -66,17 +68,17 @@ const won = async (game, user) => {
       username: user,
     },
     ExpressionAttributeNames: {'#wins': 'wins'},
-    ExpressionAttributeValues: {':inc': 1},
+    ExpressionAttributeValues: {':inc': winner.Item.wins + 1},
     UpdateExpression: 'SET #wins = :inc',
   };
 
   const loserParams = {
     TableName: usersTable,
     Key: {
-      username: loser,
+      username: loserUsername,
     },
     ExpressionAttributeNames: {'#losses': 'losses'},
-    ExpressionAttributeValues: {':inc': 1},
+    ExpressionAttributeValues: {':inc': loser.Item.losses + 1},
     UpdateExpression: 'SET #losses = :inc',
   };
 

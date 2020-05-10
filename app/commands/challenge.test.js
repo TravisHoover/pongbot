@@ -28,13 +28,13 @@ describe('Challenge command tests', () => {
     test('record win', async () => {
       await db.putItem('Users', {
         username: 'challenger',
-        wins: 0,
-        losses: 0,
+        wins: 1,
+        losses: 1,
       });
       await db.putItem('Users', {
         username: 'opponent',
-        wins: 0,
-        losses: 0,
+        wins: 1,
+        losses: 1,
       });
       await db.putItem(
         'Games',
@@ -57,6 +57,10 @@ describe('Challenge command tests', () => {
       }
       const results = await challenge.won(openGame, 'challenger');
       expect(results).toBe('Game has been recorded.');
+      const updatedChallenger = await db.getItem('Users', {username: 'challenger'});
+      const updatedOpponent = await db.getItem('Users', {username: 'opponent'});
+      expect(updatedChallenger.Item.wins).toBe(2);
+      expect(updatedOpponent.Item.losses).toBe(2);
     })
   })
 });
