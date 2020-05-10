@@ -65,8 +65,9 @@ const won = async (game, user) => {
     Key: {
       username: user,
     },
+    ExpressionAttributeNames: {'#wins': 'wins'},
     ExpressionAttributeValues: {':inc': 1},
-    UpdateExpression: 'SET wins = wins + :inc',
+    UpdateExpression: 'SET #wins = :inc',
   };
 
   const loserParams = {
@@ -74,8 +75,9 @@ const won = async (game, user) => {
     Key: {
       username: loser,
     },
+    ExpressionAttributeNames: {'#losses': 'losses'},
     ExpressionAttributeValues: {':inc': 1},
-    UpdateExpression: 'SET losses = losses + :inc',
+    UpdateExpression: 'SET #losses = :inc',
   };
 
   await db.updateItem(gameParams);
