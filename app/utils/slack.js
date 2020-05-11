@@ -1,4 +1,5 @@
-const {WebClient} = require('@slack/web-api');
+const { WebClient } = require('@slack/web-api');
+
 const token = process.env.SLACK_TOKEN;
 const web = new WebClient(token);
 
@@ -9,9 +10,9 @@ const web = new WebClient(token);
  * @returns {Promise<void>}
  */
 const postMessage = async (conversationId, message) => {
-  await web.chat.postMessage({channel: conversationId, text: message});
+  await web.chat.postMessage({ channel: conversationId, text: message });
 };
 
 module.exports = {
   postMessage,
-}
+};

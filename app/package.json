@@ -18,11 +18,12 @@
     "node"
   ],
   "dependencies": {
-    "@slack/web-api": "^5.8.0",
-    "aws-sdk": "latest"
+    "@slack/web-api": "^5.8.1",
+    "aws-sdk": "^2.673.0"
   },
   "scripts": {
     "test": "jest",
+    "lint": "eslint . --fix",
     "coverage": "jest --coverage",
     "build": "cd .. && sam build",
     "deploy": "cd .. && sam build && sam deploy",
@@ -30,6 +31,9 @@
   },
   "devDependencies": {
     "@shelf/jest-dynamodb": "^1.7.0",
-    "jest": "^25.2.7"
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "jest": "^25.5.4"
   }
 }

@@ -1,22 +1,23 @@
 const db = require('../utils/db');
+
 const usersTable = process.env.USERS_TABLE;
 const gamesTable = process.env.GAMES_TABLE;
 
 /**
  * Opens a game between two registered users
- * @param challenger
- * @param opponent
+ * @param {string} challengerUsername
+ * @param {string} opponentUsername
  * @returns {Promise<string>}
  */
-const challenge = async (challenger, opponent) => {
-  challenger = await db.getItem(usersTable, {username: challenger});
-  opponent = await db.getItem(usersTable, {username: opponent.replace(/[<@>]/g, '')});
+const challenge = async (challengerUsername, opponentUsername) => {
+  const challenger = await db.getItem(usersTable, { username: challengerUsername });
+  const opponent = await db.getItem(usersTable, { username: opponentUsername.replace(/[<@>]/g, '') });
 
   if (Object.keys(challenger).length === 0) {
-    return `${challenger} has not registered';`
+    return `${challenger} has not registered';`;
   }
   if (Object.keys(opponent).length === 0) {
-    return `${opponent} has not registered';`
+    return `${opponent} has not registered';`;
   }
 
   await db.putItem(gamesTable,
@@ -25,8 +26,7 @@ const challenge = async (challenger, opponent) => {
       challenger: challenger.Item.username,
       opponent: opponent.Item.username,
       status: 'open',
-    },
-  );
+    });
 
   return `<@${challenger.Item.username}> challenging <@${opponent.Item.username}>`;
 };
@@ -44,8 +44,8 @@ const won = async (game, user) => {
   participants.push(game.Items[0].opponent);
 
   const loserUsername = participants[0] !== user ? participants[0] : participants[1];
-  const winner = await db.getItem(usersTable, {username: user});
-  const loser = await db.getItem(usersTable, {username: loserUsername});
+  const winner = await db.getItem(usersTable, { username: user });
+  const loser = await db.getItem(usersTable, { username: loserUsername });
 
   const gameParams = {
     TableName: gamesTable,
@@ -67,8 +67,8 @@ const won = async (game, user) => {
     Key: {
       username: user,
     },
-    ExpressionAttributeNames: {'#wins': 'wins'},
-    ExpressionAttributeValues: {':inc': winner.Item.wins + 1},
+    ExpressionAttributeNames: { '#wins': 'wins' },
+    ExpressionAttributeValues: { ':inc': winner.Item.wins + 1 },
     UpdateExpression: 'SET #wins = :inc',
   };
 
@@ -77,8 +77,8 @@ const won = async (game, user) => {
     Key: {
       username: loserUsername,
     },
-    ExpressionAttributeNames: {'#losses': 'losses'},
-    ExpressionAttributeValues: {':inc': loser.Item.losses + 1},
+    ExpressionAttributeNames: { '#losses': 'losses' },
+    ExpressionAttributeValues: { ':inc': loser.Item.losses + 1 },
     UpdateExpression: 'SET #losses = :inc',
   };
 
@@ -91,4 +91,4 @@ const won = async (game, user) => {
 module.exports = {
   challenge,
   won,
-}
+};

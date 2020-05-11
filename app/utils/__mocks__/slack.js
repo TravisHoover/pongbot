@@ -1,9 +1,6 @@
-'use strict'
 
-const postMessage = async (conversationId, message) => {
-  return message;
-}
+const postMessage = async (conversationId, message) => message;
 
 module.exports = {
   postMessage,
-}
+};

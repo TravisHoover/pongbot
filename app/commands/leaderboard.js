@@ -1,4 +1,5 @@
 const db = require('../utils/db');
+
 const usersTable = process.env.USERS_TABLE;
 
 const getLeaderboard = async () => {
@@ -10,10 +11,10 @@ const getLeaderboard = async () => {
     <@${user.username}> ${user.wins}
     `;
     result += formattedUser;
-  })
+  });
   return JSON.stringify(result);
 };
 
 module.exports = {
   getLeaderboard,
-}
+};

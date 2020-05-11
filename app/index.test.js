@@ -1,4 +1,3 @@
-'use strict';
 
 const index = require('./index.js');
 const db = require('./utils/db');
@@ -16,31 +15,31 @@ describe('Core tests', () => {
     const users = await index.getUsers();
     expect(users).toHaveProperty('statusCode');
     expect(users.statusCode).toBe(200);
-  })
+  });
   test('call getGames', async () => {
     const games = await index.getGames();
     expect(games).toHaveProperty('statusCode');
     expect(games.statusCode).toBe(200);
-  })
+  });
   test('handle Slack challenge', async () => {
     const test = await index.slackHandler(slackChallenge);
-    expect(test).toMatchObject({statusCode: 200});
+    expect(test).toMatchObject({ statusCode: 200 });
     const body = JSON.parse(test.body);
     expect(body).toHaveProperty('challenge');
   });
   test('create response should format as expected', async () => {
-    const body = {message: 'test'};
+    const body = { message: 'test' };
     const response = index.createResponse(200, body);
     expect(typeof response).toBe('object');
     expect(response).toHaveProperty('statusCode');
-  })
+  });
   describe('Register case', () => {
     test('register a user', async () => {
       const response = await index.slackHandler(registerMessage);
       expect(response).toHaveProperty('statusCode');
       expect(response.body).toContain('registered');
-    })
-  })
+    });
+  });
   describe('Challenge case', () => {
     test('issuing a challenge', async () => {
       await db.putItem(
@@ -51,11 +50,9 @@ describe('Core tests', () => {
           losses: 0,
         },
       );
-      const openGame = await db.queryByIndex('Games', 'status-index', 'status', 'open');
-      console.log('openGame', openGame);
       const challenge = await index.slackHandler(challengeMessage);
       expect(challenge.body).toContain('<@challenger> challenging <@opponent>');
-    })
+    });
     test('make a challenge with an open game', async () => {
       await db.putItem(
         'Games',
@@ -68,8 +65,8 @@ describe('Core tests', () => {
       );
       const challenge = await index.slackHandler(challengeMessage);
       expect(challenge.body).toContain('A game is already in progress');
-    })
-  })
+    });
+  });
   describe('Won case', () => {
     test('handle won command', async () => {
       await db.putItem(
@@ -95,7 +92,7 @@ describe('Core tests', () => {
         UpdateExpression: 'set #s = :s, winner = :w',
         ExpressionAttributeValues: {
           ':s': 'closed',
-          ':w': `challenger`,
+          ':w': 'challenger',
         },
         ExpressionAttributeNames: {
           '#s': 'status',
@@ -103,20 +100,20 @@ describe('Core tests', () => {
       });
       const results = await index.slackHandler(wonMessage);
       expect(results.body).toContain('No games in progress');
-    })
-  })
+    });
+  });
   describe('Leaderboard case', () => {
     test('handle leaderboard command', async () => {
       const results = await index.slackHandler(leaderboardMessage);
       expect(results).toHaveProperty('statusCode');
       expect(results.statusCode).toBe(200);
-    })
-  })
+    });
+  });
   test('Unrecognized command', async () => {
     const results = await index.slackHandler(unrecognizedMessage);
     expect(results).toHaveProperty('statusCode');
     expect(results.statusCode).toBe(200);
     expect(results).toHaveProperty('body');
-    expect(results.body).toBe('\"Command not recognized\"');
-  })
-})
+    expect(results.body).toBe('"Command not recognized"');
+  });
+});
