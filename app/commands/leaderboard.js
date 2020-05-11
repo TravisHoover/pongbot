@@ -7,9 +7,7 @@ const getLeaderboard = async () => {
   let result = '';
 
   users.forEach((user) => {
-    const formattedUser = `
-    <@${user.username}> ${user.wins}
-    `;
+    const formattedUser = `<@${user.username}> ${user.wins}   `;
     result += formattedUser;
   });
   return JSON.stringify(result);
