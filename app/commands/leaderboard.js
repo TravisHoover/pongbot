@@ -7,10 +7,10 @@ const getLeaderboard = async () => {
   let result = '';
 
   users.forEach((user) => {
-    const formattedUser = `<@${user.username}> ${user.wins}   `;
+    const formattedUser = `<@${user.username}> ${user.wins}\n`;
     result += formattedUser;
   });
-  return JSON.stringify(result);
+  return result;
 };
 
 module.exports = {
