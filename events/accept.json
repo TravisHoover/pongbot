@@ -1,0 +1,3 @@
+{
+  "body": "{\n    \"token\": \"gzlEdPbHt34TCMhFDmH1xqMB\",\n    \"team_id\": \"T4SC0KX4Y\",\n    \"event\": {\n        \"text\": \"opponent accept\",\n        \"user\": \"opponent\",\n        \"team\": \"T4SC0KX4Y\",\n        \"channel\": \"CU9TPH39A\"\n    },\n    \"event_id\": \"EvUNKJDKL2\",\n    \"event_time\": 1583609627,\n    \"authed_users\": [\n        \"UUPSL6NAF\"\n    ]\n}"
+}

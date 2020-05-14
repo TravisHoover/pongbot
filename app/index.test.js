@@ -6,6 +6,7 @@ const registerMessage = require('../events/register.json');
 const challengeMessage = require('../events/challenge.json');
 const leaderboardMessage = require('../events/leaderboard.json');
 const wonMessage = require('../events/won.json');
+const acceptMessage = require('../events/accept.json');
 const unrecognizedMessage = require('../events/unrecognized.json');
 
 jest.mock('./utils/slack.js');
@@ -42,10 +43,19 @@ describe('Core tests', () => {
   });
   describe('Challenge case', () => {
     test('issuing a challenge', async () => {
+      await db.clearGames();
       await db.putItem(
         'Users',
         {
           username: 'opponent',
+          wins: 0,
+          losses: 0,
+        },
+      );
+      await db.putItem(
+        'Users',
+        {
+          username: 'challenger',
           wins: 0,
           losses: 0,
         },
@@ -65,6 +75,41 @@ describe('Core tests', () => {
       );
       const challenge = await index.slackHandler(challengeMessage);
       expect(challenge.body).toContain('A game is already in progress');
+    });
+    test('make a challenge to an opponent with a pending game', async () => {
+      await db.putItem(
+        'Games',
+        {
+          ID: 'testID',
+          challenger: 'challenger',
+          opponent: 'opponent',
+          status: 'pending',
+        },
+      );
+      const challenge = await index.slackHandler(challengeMessage);
+      expect(challenge.body).toContain('Opponent already has a pending request');
+    });
+  });
+  describe('Accept case', () => {
+    test('handle accept command', async () => {
+      await db.putItem(
+        'Games',
+        {
+          ID: 'testID',
+          challenger: 'challenger',
+          opponent: 'opponent',
+          status: 'pending',
+        },
+      );
+      const result = await index.slackHandler(acceptMessage);
+      expect(result.statusCode).toBe(200);
+      expect(result.body).toContain('Challenge accepted');
+    });
+    test('handle no pending games', async () => {
+      await db.clearGames();
+      const result = await index.slackHandler(acceptMessage);
+      expect(result.statusCode).toBe(400);
+      expect(result.body).toContain('No pending games');
     });
   });
   describe('Won case', () => {

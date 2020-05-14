@@ -38,6 +38,11 @@ const updateItem = async (params) => dynamodb.update(params, (err, data) => {
   return data;
 }).promise();
 
+const deleteItem = async (params) => dynamodb.delete(params, (err, data) => {
+  if (err) return err;
+  return data;
+}).promise();
+
 const queryByIndex = async (table, index, attribute, value) => {
   const key = `#${value}`;
   const attributeKey = `:v_${value}`;
@@ -76,7 +81,29 @@ const tableScan = async (table) => {
   return scanResults;
 };
 
+const clearGames = async () => {
+  const params = {
+    TableName: 'Games',
+  };
+
+  const scanResults = [];
+  let items;
+  do {
+    // eslint-disable-next-line no-await-in-loop
+    items = await dynamodb.scan(params).promise();
+    items.Items.forEach((item) => deleteItem({
+      TableName: 'Games',
+      Key: {
+        ID: item.ID,
+      },
+    }));
+    params.ExclusiveStartKey = items.LastEvaluatedKey;
+  } while (typeof items.LastEvaluatedKey !== 'undefined');
+  return scanResults;
+};
+
 module.exports = {
+  clearGames,
   getItem,
   putItem,
   updateItem,

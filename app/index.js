@@ -94,6 +94,7 @@ const slackHandler = async (event) => {
       const pendingGameForThisUser = pendingGame.Items.find((game) => game.opponent === user);
       if (!pendingGameForThisUser) {
         response = await slack.postMessage(conversationId, 'No pending challenges');
+        return createResponse(400, 'No pending challenges');
       }
       response = await challengeHandler.accept(pendingGameForThisUser, user);
       break;
