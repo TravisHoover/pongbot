@@ -33,7 +33,7 @@ jobs:
       - name: Install
         run: cd app/ && npm install
       - name: Test
-        run: npm run coverage
+        run: cd app/ && npm run coverage
       - name: Codecov
         uses: codecov/codecov-action@v1.0.6
         env:
