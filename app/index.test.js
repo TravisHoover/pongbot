@@ -111,6 +111,21 @@ describe('Core tests', () => {
       expect(result.statusCode).toBe(400);
       expect(result.body).toContain('No pending games');
     });
+    test('handle no pending challenges for this user', async () => {
+      await db.clearGames();
+      await db.putItem(
+        'Games',
+        {
+          ID: 'testID',
+          challenger: 'opponent',
+          opponent: 'challenger',
+          status: 'pending',
+        },
+      );
+      const result = await index.slackHandler(acceptMessage);
+      expect(result.statusCode).toBe(400);
+      expect(result.body).toContain('No pending challenges');
+    });
   });
   describe('Won case', () => {
     test('handle won command', async () => {
