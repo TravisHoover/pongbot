@@ -84,20 +84,22 @@ describe('Core tests', () => {
     });
     test('handle won command with no open game', async () => {
       const openGame = await db.queryByIndex('Games', 'status-index', 'status', 'open');
-      await db.updateItem({
-        TableName: 'Games',
-        Key: {
-          ID: openGame.Items[0].ID,
-        },
-        UpdateExpression: 'set #s = :s, winner = :w',
-        ExpressionAttributeValues: {
-          ':s': 'closed',
-          ':w': 'challenger',
-        },
-        ExpressionAttributeNames: {
-          '#s': 'status',
-        },
-      });
+      if (openGame.Count === 1) {
+        await db.updateItem({
+          TableName: 'Games',
+          Key: {
+            ID: openGame.Items[0].ID,
+          },
+          UpdateExpression: 'set #s = :s, winner = :w',
+          ExpressionAttributeValues: {
+            ':s': 'closed',
+            ':w': 'challenger',
+          },
+          ExpressionAttributeNames: {
+            '#s': 'status',
+          },
+        });
+      }
       const results = await index.slackHandler(wonMessage);
       expect(results.body).toContain('No games in progress');
     });
