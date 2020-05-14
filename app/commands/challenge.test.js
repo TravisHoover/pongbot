@@ -33,7 +33,7 @@ describe('Challenge command tests', () => {
       );
       const pendingGame = await db.queryByIndex('Games', 'status-index', 'status', 'pending');
       const results = await challenge.accept(pendingGame.Items[0], 'opponent');
-      expect(results).toBe('Accepted');
+      expect(results).toBe('Challenge accepted');
     });
   });
 
