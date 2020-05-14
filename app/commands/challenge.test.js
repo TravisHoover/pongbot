@@ -17,8 +17,23 @@ describe('Challenge command tests', () => {
       await db.putItem('Users', { username: 'opponent', wins: 0, losses: 0 });
       const results = await challenge.challenge('challenger', 'opponent');
       expect(results).toContain('challenging');
-      const openGame = await db.queryByIndex('Games', 'status-index', 'status', 'open');
-      await challenge.won(openGame, 'challenger');
+    });
+  });
+
+  describe('Accepting challenges', () => {
+    test('should accept a challenge', async () => {
+      await db.putItem(
+        'Games',
+        {
+          ID: 'testID',
+          challenger: 'challenger',
+          opponent: 'opponent',
+          status: 'pending',
+        },
+      );
+      const pendingGame = await db.queryByIndex('Games', 'status-index', 'status', 'pending');
+      const results = await challenge.accept(pendingGame.Items[0], 'opponent');
+      expect(results).toBe('Challenge accepted');
     });
   });
 

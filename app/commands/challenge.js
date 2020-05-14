@@ -25,10 +25,28 @@ const challenge = async (challengerUsername, opponentUsername) => {
       ID: `${new Date()}`,
       challenger: challenger.Item.username,
       opponent: opponent.Item.username,
-      status: 'open',
+      status: 'pending',
     });
 
   return `<@${challenger.Item.username}> challenging <@${opponent.Item.username}>`;
+};
+
+const accept = async (game) => {
+  const gameParams = {
+    TableName: gamesTable,
+    Key: {
+      ID: game.ID,
+    },
+    UpdateExpression: 'set #s = :s',
+    ExpressionAttributeValues: {
+      ':s': 'open',
+    },
+    ExpressionAttributeNames: {
+      '#s': 'status',
+    },
+  };
+  await db.updateItem(gameParams);
+  return 'Challenge accepted';
 };
 
 /**
@@ -90,5 +108,6 @@ const won = async (game, user) => {
 
 module.exports = {
   challenge,
+  accept,
   won,
 };

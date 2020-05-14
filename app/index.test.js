@@ -6,6 +6,7 @@ const registerMessage = require('../events/register.json');
 const challengeMessage = require('../events/challenge.json');
 const leaderboardMessage = require('../events/leaderboard.json');
 const wonMessage = require('../events/won.json');
+const acceptMessage = require('../events/accept.json');
 const unrecognizedMessage = require('../events/unrecognized.json');
 
 jest.mock('./utils/slack.js');
@@ -42,10 +43,19 @@ describe('Core tests', () => {
   });
   describe('Challenge case', () => {
     test('issuing a challenge', async () => {
+      await db.clearGames();
       await db.putItem(
         'Users',
         {
           username: 'opponent',
+          wins: 0,
+          losses: 0,
+        },
+      );
+      await db.putItem(
+        'Users',
+        {
+          username: 'challenger',
           wins: 0,
           losses: 0,
         },
@@ -66,6 +76,56 @@ describe('Core tests', () => {
       const challenge = await index.slackHandler(challengeMessage);
       expect(challenge.body).toContain('A game is already in progress');
     });
+    test('make a challenge to an opponent with a pending game', async () => {
+      await db.putItem(
+        'Games',
+        {
+          ID: 'testID',
+          challenger: 'challenger',
+          opponent: 'opponent',
+          status: 'pending',
+        },
+      );
+      const challenge = await index.slackHandler(challengeMessage);
+      expect(challenge.body).toContain('Opponent already has a pending request');
+    });
+  });
+  describe('Accept case', () => {
+    test('handle accept command', async () => {
+      await db.putItem(
+        'Games',
+        {
+          ID: 'testID',
+          challenger: 'challenger',
+          opponent: 'opponent',
+          status: 'pending',
+        },
+      );
+      const result = await index.slackHandler(acceptMessage);
+      expect(result.statusCode).toBe(200);
+      expect(result.body).toContain('Challenge accepted');
+    });
+    test('handle no pending games', async () => {
+      await db.clearGames();
+      const result = await index.slackHandler(acceptMessage);
+      expect(result.statusCode).toBe(400);
+      expect(result.body).toContain('No pending games');
+    });
+    test('handle no pending challenges for this user', async () => {
+      await db.clearGames();
+      await db.putItem(
+        'Games',
+        {
+          ID: 'testID',
+          challenger: 'opponent',
+          opponent: 'challenger',
+          status: 'pending',
+        },
+      );
+      const result = await index.slackHandler(acceptMessage);
+      expect(result.statusCode).toBe(400);
+      expect(result.body).toContain('No pending challenges');
+    });
   });
   describe('Won case', () => {
     test('handle won command', async () => {
@@ -84,20 +144,22 @@ describe('Core tests', () => {
     });
     test('handle won command with no open game', async () => {
       const openGame = await db.queryByIndex('Games', 'status-index', 'status', 'open');
-      await db.updateItem({
-        TableName: 'Games',
-        Key: {
-          ID: openGame.Items[0].ID,
-        },
-        UpdateExpression: 'set #s = :s, winner = :w',
-        ExpressionAttributeValues: {
-          ':s': 'closed',
-          ':w': 'challenger',
-        },
-        ExpressionAttributeNames: {
-          '#s': 'status',
-        },
-      });
+      if (openGame.Count === 1) {
+        await db.updateItem({
+          TableName: 'Games',
+          Key: {
+            ID: openGame.Items[0].ID,
+          },
+          UpdateExpression: 'set #s = :s, winner = :w',
+          ExpressionAttributeValues: {
+            ':s': 'closed',
+            ':w': 'challenger',
+          },
+          ExpressionAttributeNames: {
+            '#s': 'status',
+          },
+        });
+      }
       const results = await index.slackHandler(wonMessage);
       expect(results.body).toContain('No games in progress');
     });
