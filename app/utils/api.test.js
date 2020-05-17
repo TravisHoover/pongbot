@@ -1,6 +1,6 @@
 
 const index = require('../index.js');
-const slack = require('../utils/slack');
+const slack = require('./slack');
 
 jest.mock('../utils/slack.js');
 

@@ -1,4 +1,4 @@
-const db = require('../utils/db');
+const db = require('./db');
 
 describe('DynamoDB tests', () => {
   it('should insert item into table', async () => {
