@@ -12,6 +12,9 @@ const unrecognizedMessage = require('../events/unrecognized.json');
 jest.mock('./utils/slack.js');
 
 describe('Core tests', () => {
+  beforeEach(async () => {
+    await db.clearGames();
+  });
   test('call getUsers', async () => {
     const users = await index.getUsers();
     expect(users).toHaveProperty('statusCode');
@@ -43,7 +46,6 @@ describe('Core tests', () => {
   });
   describe('Challenge case', () => {
     test('issuing a challenge', async () => {
-      await db.clearGames();
       await db.putItem(
         'Users',
         {
@@ -102,17 +104,15 @@ describe('Core tests', () => {
         },
       );
       const result = await index.slackHandler(acceptMessage);
-      expect(result.statusCode).toBe(200);
       expect(result.body).toContain('Challenge accepted');
+      expect(result.statusCode).toBe(200);
     });
     test('handle no pending games', async () => {
-      await db.clearGames();
       const result = await index.slackHandler(acceptMessage);
       expect(result.statusCode).toBe(400);
       expect(result.body).toContain('No pending games');
     });
     test('handle no pending challenges for this user', async () => {
-      await db.clearGames();
       await db.putItem(
         'Games',
         {

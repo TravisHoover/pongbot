@@ -3,6 +3,7 @@ const leaderboard = require('./leaderboard.js');
 
 describe('Leaderboard command tests', () => {
   test('get leaderboard', async () => {
+    await db.clearGames();
     await db.putItem('Users', {
       username: 'challenger',
       wins: 1,
