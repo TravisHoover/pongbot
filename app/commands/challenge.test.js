@@ -2,6 +2,9 @@ const challenge = require('./challenge');
 const db = require('../utils/db');
 
 describe('Challenge command tests', () => {
+  beforeEach(async () => {
+    await db.clearGames();
+  });
   describe('Create a challenge', () => {
     test('Reject if challenger has not registered', async () => {
       const results = await challenge.challenge('nobody', 'opponent');

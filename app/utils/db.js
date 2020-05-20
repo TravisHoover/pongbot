@@ -38,11 +38,6 @@ const updateItem = async (params) => dynamodb.update(params, (err, data) => {
   return data;
 }).promise();
 
-const deleteItem = async (params) => dynamodb.delete(params, (err, data) => {
-  if (err) return err;
-  return data;
-}).promise();
-
 const queryByIndex = async (table, index, attribute, value) => {
   const key = `#${value}`;
   const attributeKey = `:v_${value}`;
@@ -81,24 +76,30 @@ const tableScan = async (table) => {
   return scanResults;
 };
 
+/**
+ * Deletes all items in the Games table
+ * @returns {Promise<[]>}
+ */
 const clearGames = async () => {
-  const params = {
-    TableName: 'Games',
-  };
-
   const scanResults = [];
-  let items;
-  do {
-    // eslint-disable-next-line no-await-in-loop
-    items = await dynamodb.scan(params).promise();
-    items.Items.forEach((item) => deleteItem({
-      TableName: 'Games',
-      Key: {
-        ID: item.ID,
-      },
-    }));
-    params.ExclusiveStartKey = items.LastEvaluatedKey;
-  } while (typeof items.LastEvaluatedKey !== 'undefined');
+  const items = await dynamodb.scan({
+    TableName: 'Games',
+  }).promise();
+  const deleteParams = items.Items.map((item) => ({
+    DeleteRequest: {
+      Key: { ID: item.ID },
+    },
+  }));
+  const params = {
+    RequestItems: {
+      Games: deleteParams,
+    },
+  };
+  if (params.RequestItems.Games.length > 0) {
+    await dynamodb
+      .batchWrite(params)
+      .promise();
+  }
   return scanResults;
 };
 
