@@ -14,6 +14,9 @@ jest.mock('./utils/slack.js');
 describe('Core tests', () => {
   beforeEach(async () => {
     await db.clearGames();
+    await db.clearUsers();
+    await db.createTestUser('challenger');
+    await db.createTestUser('opponent');
   });
   test('call getUsers', async () => {
     const users = await index.getUsers();
@@ -46,22 +49,6 @@ describe('Core tests', () => {
   });
   describe('Challenge case', () => {
     test('issuing a challenge', async () => {
-      await db.putItem(
-        'Users',
-        {
-          username: 'opponent',
-          wins: 0,
-          losses: 0,
-        },
-      );
-      await db.putItem(
-        'Users',
-        {
-          username: 'challenger',
-          wins: 0,
-          losses: 0,
-        },
-      );
       const challenge = await index.slackHandler(challengeMessage);
       expect(challenge.body).toContain('<@challenger> challenging <@opponent>');
     });
@@ -89,7 +76,7 @@ describe('Core tests', () => {
         },
       );
       const challenge = await index.slackHandler(challengeMessage);
-      expect(challenge.body).toContain('Opponent already has a pending request');
+      expect(challenge.body).toContain('already has a pending request');
     });
   });
   describe('Accept case', () => {
@@ -109,8 +96,7 @@ describe('Core tests', () => {
     });
     test('handle no pending games', async () => {
       const result = await index.slackHandler(acceptMessage);
-      expect(result.statusCode).toBe(400);
-      expect(result.body).toContain('No pending games');
+      expect(result.body).toContain('no pending games');
     });
     test('handle no pending challenges for this user', async () => {
       await db.putItem(
@@ -123,7 +109,6 @@ describe('Core tests', () => {
         },
       );
       const result = await index.slackHandler(acceptMessage);
-      expect(result.statusCode).toBe(400);
       expect(result.body).toContain('No pending challenges');
     });
   });

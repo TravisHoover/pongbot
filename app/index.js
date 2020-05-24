@@ -77,27 +77,33 @@ const slackHandler = async (event) => {
     case 'challenge':
       if (openGame.Count > 0) {
         response = 'A game is already in progress.';
+        break;
       }
       if (pendingGame.Items
         .some((game) => game.challenger === opponent || game.opponent === opponent)) {
-        response = `@<${opponent} already has a pending request`;
+        response = `@<${opponent}> already has a pending request`;
+        break;
       }
       response = await challengeHandler.challenge(user, opponent);
       break;
     case 'accept':
       if (pendingGame.Count < 1) {
         response = 'There are no pending games';
+        break;
       }
       // eslint-disable-next-line no-case-declarations
-      const pendingGameForThisUser = pendingGame.Items.find((game) => game.opponent === user);
+      const pendingGameForThisUser = pendingGame.Items
+        .find((game) => game.opponent === user) || false;
       if (!pendingGameForThisUser) {
         response = 'No pending challenges';
+        break;
       }
       response = await challengeHandler.accept(pendingGameForThisUser, user);
       break;
     case 'won':
       if (openGame.Count > 0) {
         response = await challengeHandler.won(openGame, user);
+        break;
       } else response = 'No games in progress.';
       break;
     case 'leaderboard':

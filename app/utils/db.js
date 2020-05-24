@@ -103,8 +103,45 @@ const clearGames = async () => {
   return scanResults;
 };
 
+/**
+ * Delete all users
+ * @returns {Promise<[]>}
+ */
+const clearUsers = async () => {
+  const scanResults = [];
+  const items = await dynamodb.scan({
+    TableName: 'Users',
+  }).promise();
+  const deleteParams = items.Items.map((item) => ({
+    DeleteRequest: {
+      Key: { username: item.username },
+    },
+  }));
+  const params = {
+    RequestItems: {
+      Users: deleteParams,
+    },
+  };
+  if (params.RequestItems.Users.length > 0) {
+    await dynamodb
+      .batchWrite(params)
+      .promise();
+  }
+  return scanResults;
+};
+
+const createTestUser = async (user) => {
+  await putItem('Users', {
+    username: user,
+    wins: 1,
+    losses: 1,
+  });
+};
+
 module.exports = {
   clearGames,
+  clearUsers,
+  createTestUser,
   getItem,
   putItem,
   updateItem,
