@@ -4,6 +4,9 @@ const db = require('../utils/db');
 describe('Challenge command tests', () => {
   beforeEach(async () => {
     await db.clearGames();
+    await db.clearUsers();
+    await db.createTestUser('challenger');
+    await db.createTestUser('opponent');
   });
   describe('Create a challenge', () => {
     test('Reject if challenger has not registered', async () => {
@@ -11,13 +14,10 @@ describe('Challenge command tests', () => {
       expect(results).toContain('has not registered');
     });
     test('Reject if opponent has not registered', async () => {
-      await db.putItem('Users', { username: 'challenger' });
       const results = await challenge.challenge('challenger', 'nobody');
       expect(results).toContain('has not registered');
     });
     test('Open a game if both participants have registered', async () => {
-      await db.putItem('Users', { username: 'challenger', wins: 0, losses: 0 });
-      await db.putItem('Users', { username: 'opponent', wins: 0, losses: 0 });
       const results = await challenge.challenge('challenger', 'opponent');
       expect(results).toContain('challenging');
     });
@@ -42,16 +42,6 @@ describe('Challenge command tests', () => {
 
   describe('Record a win', () => {
     test('record win', async () => {
-      await db.putItem('Users', {
-        username: 'challenger',
-        wins: 1,
-        losses: 1,
-      });
-      await db.putItem('Users', {
-        username: 'opponent',
-        wins: 1,
-        losses: 1,
-      });
       await db.putItem(
         'Games',
         {

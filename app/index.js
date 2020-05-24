@@ -3,6 +3,7 @@ const slack = require('./utils/slack');
 const challengeHandler = require('./commands/challenge');
 const leaderboardHandler = require('./commands/leaderboard');
 const registerHandler = require('./commands/register');
+const helpHandler = require('./commands/help');
 
 const usersTable = process.env.USERS_TABLE;
 const gamesTable = process.env.GAMES_TABLE;
@@ -75,36 +76,41 @@ const slackHandler = async (event) => {
       break;
     case 'challenge':
       if (openGame.Count > 0) {
-        await slack.postMessage(conversationId, 'A game is already in progress');
-        return createResponse(400, 'A game is already in progress.');
+        response = 'A game is already in progress.';
+        break;
       }
       if (pendingGame.Items
         .some((game) => game.challenger === opponent || game.opponent === opponent)) {
-        await slack.postMessage(conversationId, `@<${opponent} already has a pending request`);
-        return createResponse(400, 'Opponent already has a pending request');
+        response = `@<${opponent}> already has a pending request`;
+        break;
       }
       response = await challengeHandler.challenge(user, opponent);
       break;
     case 'accept':
       if (pendingGame.Count < 1) {
-        await slack.postMessage(conversationId, 'There are no pending games');
-        return createResponse(400, 'No pending games');
+        response = 'There are no pending games';
+        break;
       }
       // eslint-disable-next-line no-case-declarations
-      const pendingGameForThisUser = pendingGame.Items.find((game) => game.opponent === user);
+      const pendingGameForThisUser = pendingGame.Items
+        .find((game) => game.opponent === user) || false;
       if (!pendingGameForThisUser) {
-        response = await slack.postMessage(conversationId, 'No pending challenges');
-        return createResponse(400, 'No pending challenges');
+        response = 'No pending challenges';
+        break;
       }
       response = await challengeHandler.accept(pendingGameForThisUser, user);
       break;
     case 'won':
       if (openGame.Count > 0) {
         response = await challengeHandler.won(openGame, user);
+        break;
       } else response = 'No games in progress.';
       break;
     case 'leaderboard':
       response = await leaderboardHandler.getLeaderboard();
+      break;
+    case 'help':
+      response = await helpHandler.getHelp();
       break;
     default:
       response = 'Command not recognized';
