@@ -8,6 +8,7 @@ const leaderboardMessage = require('../events/leaderboard.json');
 const wonMessage = require('../events/won.json');
 const acceptMessage = require('../events/accept.json');
 const unrecognizedMessage = require('../events/unrecognized.json');
+const helpMessage = require('../events/help.json');
 
 jest.mock('./utils/slack.js');
 
@@ -154,6 +155,13 @@ describe('Core tests', () => {
       const results = await index.slackHandler(leaderboardMessage);
       expect(results).toHaveProperty('statusCode');
       expect(results.statusCode).toBe(200);
+    });
+  });
+  describe('Help case', () => {
+    test('handle help command', async () => {
+      const results = await index.slackHandler(helpMessage);
+      expect(results.statusCode).toBe(200);
+      expect(results.body).toContain('Pongbot curates and records ping-pong games');
     });
   });
   test('Unrecognized command', async () => {
