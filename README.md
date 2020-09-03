@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/TravisHoover/pongbot.svg?branch=master)](https://travis-ci.org/TravisHoover/pongbot)
 [![Node.js CI](https://github.com/TravisHoover/pongbot/workflows/Node.js%20CI/badge.svg)](https://github.com/TravisHoover/pongbot/actions)
 [![codecov](https://codecov.io/gh/TravisHoover/pongbot/branch/master/graph/badge.svg)](https://codecov.io/gh/TravisHoover/pongbot)
 # Pongbot
