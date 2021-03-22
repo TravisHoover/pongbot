@@ -30,7 +30,7 @@
     "logs": "sam logs -n SlackFunction --stack-name pongbot --tail"
   },
   "devDependencies": {
-    "@shelf/jest-dynamodb": "^1.7.0",
+    "@shelf/jest-dynamodb": "^1.8.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.22.0",
     "eslint-config-airbnb-base": "^14.2.1",
