@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "@slack/web-api": "^5.8.1",
-    "aws-sdk": "^2.787.0"
+    "aws-sdk": "^2.1295.0"
   },
   "scripts": {
     "test": "jest",
